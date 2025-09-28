@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>U.S. Power Projects (2014–2025) — > $1B</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--muted:#9aa4b2;--accent:#00b4d8;--glass: rgba(255,255,255,0.03)}
+    body{font-family:Inter,system-ui,Segoe UI,Arial;background:linear-gradient(180deg,#021428 0%, #081426 100%);color:#e6eef6;margin:0;padding:28px}
+    .container{max-width:1200px;margin:0 auto}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    h1{font-size:20px;margin:0}
+    p.lead{color:var(--muted);margin:6px 0 0;font-size:13px}
+    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 20px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03)}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    thead th{position:sticky;top:0;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));backdrop-filter:blur(4px);z-index:2;text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer}
+    tbody td{padding:10px;border-bottom:1px dashed rgba(255,255,255,0.03);vertical-align:top}
+    .muted{color:var(--muted);font-size:12px}
+    .badge{display:inline-block;padding:6px 8px;border-radius:999px;font-size:12px;background:var(--glass);border:1px solid rgba(255,255,255,0.03);color:var(--accent)}
+    .caveat{font-size:12px;color:#ffd39e;background:#3b2a16;padding:8px;border-radius:8px;margin-top:8px}
+    .controls{display:flex;gap:8px;align-items:center}
+    .btn{background:var(--accent);color:#042034;padding:8px 12px;border-radius:8px;border:none;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    footer{margin-top:14px;color:var(--muted);font-size:12px}
+    #searchBox{padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:#0a1a2c;color:#e6eef6}
+    @media (max-width:900px){thead th:nth-child(6),tbody td:nth-child(6),thead th:nth-child(7),tbody td:nth-child(7){display:none}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>U.S. Power Projects (2014–2025) — ≥ US$1B</h1>
+        <p class="lead">Table of generation, transmission and large storage projects completed (or substantially commissioned) 2014–2025. Includes FID/finance-year, forecasted cost & schedule at FID, actual completion and reported cost. Caveats included where appropriate.</p>
+      </div>
+      <div class="controls">
+        <input type="text" id="searchBox" placeholder="Search project..." />
+        <button class="btn" id="downloadCsv">Download CSV</button>
+        <button class="btn ghost" id="printBtn">Print</button>
+      </div>
+    </header>
+
+    <div class="card">
+      <table id="projectsTable">
+        <thead>
+          <tr>
+            <th>Project (location)</th>
+            <th>Key data (capacity / scope)</th>
+            <th>FID / finance year</th>
+            <th>Forecast cost at FID</th>
+            <th>Forecasted completion (at FID)</th>
+            <th>Actual completion / energization</th>
+            <th>Actual reported final cost</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Plant Vogtle Units 3 & 4 (Waynesboro, GA)</strong><br/><a href="https://www.reuters.com/business/energy/georgia-powers-plant-vogtle-unit-3-begins-commercial-operation-2023-07-31/" target="_blank">Source: Reuters</a></td>
+            <td>Two AP1000 units — ~1,117 MW each (~2,234 MW added)</td>
+            <td>~2008–2009</td>
+            <td>Initial near-FID estimate ≈ US$14.0–14.8B</td>
+            <td>Unit 3 by 2016; Unit 4 by 2017</td>
+            <td>Unit 3 — 31 Jul 2023; Unit 4 — 29 Apr 2024</td>
+            <td>Final / widely reported total cost ≈ US$30–35B</td>
+            <td>Nuclear (Generation)</td>
+          </tr>
+
+          <tr>
+            <td><strong>Ivanpah Solar Electric Generating System (Mojave, CA)</strong><br/><a href="https://www.energy.gov/lpo/ivanpah" target="_blank">DOE LPO</a></td>
+            <td>CSP towers — ≈392 MW gross / ~377 MW net</td>
+            <td>2010–2011</td>
+            <td>DOE loan guarantee: US$1.6B (finance support documented)</td>
+            <td>Commissioning forecast ~2013–2014</td>
+            <td>Commercial operations / opening: Feb 2014</td>
+            <td>Final reported construction cost ≈ US$2.18–2.34B</td>
+            <td>Solar CSP (Generation)</td>
+          </tr>
+
+          <tr>
+            <td><strong>Topaz Solar Farm (Carrizo Plain, CA)</strong><br/><a href="https://www.energy.gov/lpo/projects/topaz-solar-farm" target="_blank">DOE LPO</a></td>
+            <td>PV — ~550 MW AC</td>
+            <td>~2011</td>
+            <td>~US$2.4–2.5B</td>
+            <td>Forecast completion: 2014</td>
+            <td>Commissioned: Nov 2014</td>
+            <td>~US$2.4B</td>
+            <td>Solar PV (Generation)</td>
+          </tr>
+
+          <tr>
+            <td><strong>Desert Sunlight Solar Farm (Riverside Co., CA)</strong><br/><a href="https://www.energy.gov/lpo/projects/desert-sunlight-solar-farm" target="_blank">DOE LPO</a></td>
+            <td>PV — ~550 MW</td>
+            <td>2011</td>
+            <td>DOE loan guarantee: US$1.46B</td>
+            <td>Forecast completion: ~2014–2015</td>
+            <td>Operational / commercial: Feb 2015</td>
+            <td>Loan guarantee US$1.46B (project financing documented)</td>
+            <td>Solar PV (Generation)</td>
+          </tr>
+
+          <tr>
+            <td><strong>Solar Star (Rosamond / Kern Co., CA)</strong><br/><a href="https://www.energy.gov/lpo/projects/solar-star" target="_blank">DOE LPO</a></td>
+            <td>PV — ~579 MW</td>
+            <td>2012–2013</td>
+            <td>~US$2.5B</td>
+            <td>Forecast completion: 2015</td>
+            <td>Fully commissioned: June 2015</td>
+            <td>~US$2.5B</td>
+            <td>Solar PV (Generation)</td>
+          </tr>
+
+          <tr>
+            <td><strong>CPV Three Rivers Energy Center (Grundy County, IL)</strong><br/><a href="https://www.powermag.com/financing-secured-for-new-gas-plant-with-ge-ha-turbines/" target="_blank">PowerMag</a></td>
+            <td>Combined-cycle gas — 1,250 MW</td>
+            <td>2020</td>
+            <td>~US$1.3B</td>
+            <td>Forecast commercial operation: 2023</td>
+            <td>Commercial operation: Aug 16, 2023</td>
+            <td>~US$1.3B</td>
+            <td>Gas CC (Generation)</td>
+          </tr>
+
+          <tr>
+            <td><strong>CapX2020 (Upper Midwest transmission program)</strong><br/><a href="https://gridnorthpartners.com/wp-content/uploads/2021/03/uofm-humphrey_capx2020_final_report.pdf" target="_blank">CapX Report</a></td>
+            <td>~800 miles (≈1,300 km) new 230/345 kV lines + substations</td>
+            <td>Mid-2000s (segment approvals ~2007)</td>
+            <td>Program budget ≈ US$2.0–2.1B</td>
+            <td>Forecasted staged energization through 2014–2017</td>
+            <td>Most segments completed by ~2017</td>
+            <td>~US$2.0–2.1B (program totals)</td>
+            <td>Transmission</td>
+          </tr>
+
+          <tr>
+            <td><strong>Vineyard Wind 1 (offshore, MA)</strong><br/><a href="https://www.vineyardwind.com/press-releases/2021/9/15/vineyard-wind-announces-financial-close" target="_blank">Vineyard Wind</a></td>
+            <td>Offshore wind — ~800 MW (62 turbines planned)</td>
+            <td>2021 (financial close Sep 15, 2021)</td>
+            <td>$2.3B senior debt closed; total project investment ~US$2.8–3.0B</td>
+            <td>Forecast (at finance close): first power / initial deliveries in 2023</td>
+            <td>Staged commissioning: first turbines & deliveries 2023; first full-phase deliveries reported Feb 22, 2024</td>
+            <td>$2.3B debt closed; total investment estimates ~US$2.8–3.0B</td>
+            <td>Offshore Wind (Generation)</td>
+          </tr>
+
+          <tr>
+            <td><strong>Moss Landing Energy Storage Facility (Vistra) — (Moss Landing, CA)</strong><br/><a href="https://www.vistracorp.com/news/2020/vistra-announces-completion-of-worlds-largest-battery-energy-storage-system/" target="_blank">Vistra Press</a></td>
+            <td>Battery energy storage — aggregate 750 MW / 3,000 MWh (Ph1/Ph2/Ph3)</td>
+            <td>2018 (announced / early FID & development)</td>
+            <td>Phase-level estimates: Phase 1 ~$500–600M; aggregate phases >US$1B</td>
+            <td>Forecast (Phase 1): commercial operation by end-2020</td>
+            <td>Phase 1 operating end-2020; Phase 2 Aug 2021; Phase 3 mid-2023</td>
+            <td>Aggregate / phased investment: >US$1B (note later impairment/write-off)</td>
+            <td>Battery Storage (Grid-scale)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="caveat">
+        <strong>Important caveats:</strong>
+        <ul style="margin:8px 0 0 18px;color:#ffd39e">
+          <li><strong>Vineyard Wind 1:</strong> commissioning was staged across 2023–2024. Financial close and debt figures are documented (2021), but "completion" was delivered in phases — see project sources for exact milestone wording.</li>
+          <li><strong>Moss Landing:</strong> a multi-phase battery project delivered in phases; cost disclosures are phase-level and developer-level. Aggregate investment exceeds US$1B by public reporting, but later accounting events (a Vistra impairment/write-off related to Phase 1 in 2025) complicate the final accounting picture.</li>
+        </ul>
+      </div>
+
+      <footer>
+        Sources embedded per project row. Table is interactive: sort columns by clicking headers, search via input box, export CSV, or print.
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Prepare CSV export from the table
+    function tableToCSV(table) {
+      const rows = Array.from(table.querySelectorAll('tr'));
+      return rows.map(r => {
+        const cells = Array.from(r.querySelectorAll('th,td'));
+        return cells.map(c => '"' + c.innerText.replace(/"/g,'""') + '"').join(',');
+      }).join('\n');
+    }
+
+    document.getElementById('downloadCsv').addEventListener('click', () => {
+      const csv = tableToCSV(document.getElementById('projectsTable'));
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'US_power_projects_2014-2025_over_1B.csv';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    // Table sorting
+    document.querySelectorAll('thead th').forEach((th, idx) => {
+      th.addEventListener('click', () => {
+        const tbody = th.closest('table').querySelector('tbody');
+        Array.from(tbody.querySelectorAll('tr'))
+          .sort((a, b) => a.children[idx].innerText.localeCompare(b.children[idx].innerText))
+          .forEach(tr => tbody.appendChild(tr));
+      });
+    });
+
+    // Search filter
+    document.getElementById('searchBox').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('#projectsTable tbody tr').forEach(tr => {
+        tr.style.display = tr.innerText.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>
