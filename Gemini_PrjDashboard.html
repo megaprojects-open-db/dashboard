@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Performance Dashboard</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <style>
+        /* Custom font import for a cleaner look */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f9;
+        }
+        /* Style for the dashboard container to prevent horizontal scroll on smaller screens */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        /* Custom styles for select box */
+        .filter-select {
+            @apply appearance-none block w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg leading-tight focus:outline-none focus:bg-white focus:border-indigo-500 shadow-sm transition duration-150;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div id="app" class="max-w-7xl mx-auto">
+        <header class="mb-8">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight" id="main-title">Project Variance Analysis Dashboard (14 Projects)</h1>
+            <p class="text-lg text-gray-500 mt-1">Combined visualization of Cost and Schedule Variance for all projects.</p>
+        </header>
+
+        <!-- Filter Dropdown -->
+        <div class="flex items-center mb-8">
+            <label for="sector-filter" class="text-lg font-semibold text-gray-700 mr-4">Filter by Sector:</label>
+            <div class="relative w-48">
+                <select id="sector-filter" class="filter-select" onchange="applyFilter(this.value)">
+                    <option value="All">All Projects</option>
+                    <option value="G">Sector G</option>
+                    <option value="T">Sector T</option>
+                </select>
+                <!-- Custom arrow icon for the select box -->
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Cards Section (Summary Stats) -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="kpi-cards">
+            <!-- Cards will be injected here by JavaScript -->
+        </section>
+
+
+        <!-- Charts Section (Detailed Visualizations) -->
+        <section class="dashboard-grid">
+            
+            <!-- Cost Variance Bar Chart -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Project Cost Variance (%)</h2>
+                <div class="h-80 w-full">
+                    <canvas id="completionChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Schedule Variance Bar Chart -->
+            <div class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Project Schedule Variance (%)</h2>
+                <div class="h-80 w-full flex items-center justify-center">
+                    <canvas id="budgetChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Gantt Chart (Replaces Trend Line Chart) -->
+            <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Project Timeline (FID Year to Actual ISD)</h2>
+                <p class="text-sm text-gray-500 mb-4">Green indicates project finished on time (Actual ISD <= Scheduled ISD). Red indicates a delay.</p>
+                <div class="h-96 w-full">
+                    <canvas id="ganttChart"></canvas>
+                </div>
+            </div>
+            
+        </section>
+
+        <!-- New Section for Bubble Chart -->
+        <section class="dashboard-grid mt-4">
+            <div class="lg:col-span-3 bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Project Performance Matrix (Cost vs. Schedule Variance)</h2>
+                <p class="text-sm text-gray-500 mb-4">X-Axis: Cost Variance (%), Y-Axis: Schedule Variance (%), Size: Actual Cost (B), Color: Sector.</p>
+                <div class="h-96 w-full">
+                    <canvas id="bubbleChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- 1. CORE PROJECT DATA (BATCH 1 & BATCH 2) ---
+        // Added 'sector' property for easier filtering
+        const allProjects = [
+            // Project 1: FID 2012, Sched ISD 2017, Actual ISD 2023 (Delayed)
+            { name: 'Project 1 (G)', sector: 'G', costVariance: 82.0, scheduleVariance: 120, actualCost: 13.5, fidYear: 2012, scheduleISD: 2017, actualISD: 2023 },
+            // Project 2: FID 2015, Sched ISD 2033, Actual ISD 2033 (On Time)
+            { name: 'Project 2 (G)', sector: 'G', costVariance: 0.0, scheduleVariance: 0, actualCost: 13.0, fidYear: 2015, scheduleISD: 2033, actualISD: 2033 },
+            // Project 3: FID 2016, Sched ISD 2026, Actual ISD 2026 (On Time)
+            { name: 'Project 3 (G)', sector: 'G', costVariance: 1.4, scheduleVariance: 0, actualCost: 13.0, fidYear: 2016, scheduleISD: 2026, actualISD: 2026 },
+            // Project 4: FID 2014, Sched ISD 2019, Actual ISD 2022 (Delayed)
+            { name: 'Project 4 (G)', sector: 'G', costVariance: 34.0, scheduleVariance: 60, actualCost: 8.7, fidYear: 2014, scheduleISD: 2019, actualISD: 2022 },
+            // Project 5: FID 2009, Sched ISD 2020, Actual ISD 2023 (Delayed)
+            { name: 'Project 5 (G)', sector: 'G', costVariance: 14.0, scheduleVariance: 27, actualCost: 7.4, fidYear: 2009, scheduleISD: 2020, actualISD: 2023 },
+            // Project 6: FID 2013, Sched ISD 2017, Actual ISD 2018 (Delayed)
+            { name: 'Project 6 (T)', sector: 'T', costVariance: 45.0, scheduleVariance: 25, actualCost: 4.8, fidYear: 2013, scheduleISD: 2017, actualISD: 2018 },
+            // Project 7: FID 2010, Sched ISD 2015, Actual ISD 2015 (On Time)
+            { name: 'Project 7 (G)', sector: 'G', costVariance: 0.0, scheduleVariance: 0, actualCost: 2.6, fidYear: 2010, scheduleISD: 2015, actualISD: 2015 },
+            
+            // Project 8: FID 2019, Sched ISD 2023, Actual ISD 2024 (Delayed)
+            { name: 'Project 8 (T)', sector: 'T', costVariance: -5.0, scheduleVariance: 25, actualCost: 1.8, fidYear: 2019, scheduleISD: 2023, actualISD: 2024 },
+            // Project 9: FID 2013, Sched ISD 2018, Actual ISD 2018 (On Time)
+            { name: 'Project 9 (T)', sector: 'T', costVariance: 29.0, scheduleVariance: 0, actualCost: 1.8, fidYear: 2013, scheduleISD: 2018, actualISD: 2018 },
+            // Project 10: FID 2011, Sched ISD 2015, Actual ISD 2015 (On Time)
+            { name: 'Project 10 (T)', sector: 'T', costVariance: 13.0, scheduleVariance: 0, actualCost: 1.7, fidYear: 2011, scheduleISD: 2015, actualISD: 2015 },
+            // Project 11: FID 2014, Sched ISD 2019, Actual ISD 2019 (On Time)
+            { name: 'Project 11 (T)', sector: 'T', costVariance: 14.0, scheduleVariance: 0, actualCost: 1.6, fidYear: 2014, scheduleISD: 2019, actualISD: 2019 },
+            // Project 12: FID 2015, Sched ISD 2018, Actual ISD 2019 (Delayed)
+            { name: 'Project 12 (T)', sector: 'T', costVariance: -7.0, scheduleVariance: 33, actualCost: 1.3, fidYear: 2015, scheduleISD: 2018, actualISD: 2019 },
+            // Project 13: FID 2009, Sched ISD 2020, Actual ISD: 2020 (On Time)
+            { name: 'Project 13 (T)', sector: 'T', costVariance: -35.0, scheduleVariance: 0, actualCost: 1.3, fidYear: 2009, scheduleISD: 2020, actualISD: 2020 },
+            // Project 14: FID 2018, Sched ISD 2022, Actual ISD: 2023 (Delayed)
+            { name: 'Project 14 (T)', sector: 'T', costVariance: 63.0, scheduleVariance: 25, actualCost: 1.3, fidYear: 2018, scheduleISD: 2022, actualISD: 2023 },
+        ];
+
+        // Global variables for chart instances and currently filtered data
+        let currentCharts = {};
+        let filteredProjects = [];
+        let currentFilter = 'All';
+
+        // --- 2. DATA PROCESSING & KPI CALCULATION ---
+        function calculateMetrics(data) {
+            if (data.length === 0) {
+                 return { projectNames: [], costVariances: [], scheduleVariances: [], totalProjects: 0, avgCostVariance: '0.0', avgScheduleVarianceValue: 0, avgActualSpend: '0.0', ganttData: [], bubbleDatasets: [] };
+            }
+
+            const projectNames = data.map(p => p.name);
+            const costVariances = data.map(p => p.costVariance);
+            const scheduleVariances = data.map(p => p.scheduleVariance);
+            
+            // Cost KPIs
+            const totalCostVariance = costVariances.reduce((sum, rate) => sum + rate, 0);
+            const avgCostVarianceValue = (totalCostVariance / data.length);
+            const avgCostVariance = avgCostVarianceValue.toFixed(1);
+
+            // Schedule KPIs
+            const totalScheduleVariance = scheduleVariances.reduce((sum, rate) => sum + rate, 0);
+            const avgScheduleVarianceValue = (totalScheduleVariance / data.length);
+            const avgScheduleVariance = avgScheduleVarianceValue.toFixed(1);
+            const avgScheduleVarianceSign = avgScheduleVarianceValue >= 0 ? '+' : '';
+
+            // Spend KPIs
+            const totalActualSpendValue = data.reduce((sum, p) => sum + p.actualCost, 0);
+            const avgActualSpend = (totalActualSpendValue / data.length).toFixed(1);
+
+            // Gantt Chart Data: [Start Year, End Year]
+            const ganttData = data.map(p => ({
+                x: [p.fidYear, p.actualISD],
+                y: p.name,
+                isDelayed: p.actualISD > p.scheduleISD 
+            }));
+
+            // Bubble Chart Data Prep
+            const bubbleDatasets = [];
+            const sectorDataMap = {}; 
+            const actualCosts = data.map(p => p.actualCost);
+            const minCost = Math.min(...actualCosts);
+            const maxCost = Math.max(...actualCosts);
+            const costRange = maxCost - minCost;
+            const MIN_RADIUS = 8; 
+            const MAX_RADIUS = 35; 
+
+            data.forEach(p => {
+                const sector = p.sector;
+                let radius = MIN_RADIUS;
+                
+                if (costRange > 0) {
+                    const normalizedCost = (p.actualCost - minCost) / costRange;
+                    radius = MIN_RADIUS + (normalizedCost * (MAX_RADIUS - MIN_RADIUS));
+                } else {
+                    radius = (MAX_RADIUS + MIN_RADIUS) / 2;
+                }
+
+                const bubblePoint = {
+                    x: p.costVariance,
+                    y: p.scheduleVariance,
+                    r: radius,
+                    name: p.name, 
+                    actualCost: p.actualCost 
+                };
+
+                if (!sectorDataMap[sector]) {
+                    sectorDataMap[sector] = [];
+                }
+                sectorDataMap[sector].push(bubblePoint);
+            });
+
+            const sectorColorsMap = {
+                'G': { background: 'rgba(79, 70, 229, 0.6)', border: 'rgba(79, 70, 229, 1)' }, // Indigo (Blue)
+                'T': { background: 'rgba(234, 88, 12, 0.6)', border: 'rgba(234, 88, 12, 1)' }  // Orange
+            };
+
+            for (const sector in sectorDataMap) {
+                bubbleDatasets.push({
+                    label: `Sector ${sector}`,
+                    data: sectorDataMap[sector],
+                    backgroundColor: sectorColorsMap[sector]?.background || 'rgba(107, 114, 128, 0.6)',
+                    borderColor: sectorColorsMap[sector]?.border || 'rgba(107, 114, 128, 1)',
+                    borderWidth: 2,
+                });
+            }
+
+            return { 
+                projectNames, costVariances, scheduleVariances, ganttData, bubbleDatasets, 
+                totalProjects: data.length, avgCostVarianceValue, avgCostVariance, avgScheduleVarianceValue, avgScheduleVariance, avgScheduleVarianceSign, avgActualSpend 
+            };
+        }
+        
+        // --- 3. KPI CARD RENDERING ---
+        function renderKpiCards(metrics) {
+            const kpiContainer = document.getElementById('kpi-cards');
+
+            const cards = [
+                // 1. Total Projects
+                { title: 'Total Projects', value: metrics.totalProjects, icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>`, color: 'indigo' },
+                
+                // 2. Avg. Cost Var.
+                { title: 'Avg. Cost Var.', value: `${metrics.avgCostVarianceValue >= 0 ? '+' : ''}${metrics.avgCostVariance}%`, icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${metrics.avgCostVarianceValue > 0 ? 'text-red-500' : 'text-green-500'}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>`, color: metrics.avgCostVarianceValue > 0 ? 'red' : 'green' },
+                
+                // 3. Avg. Schedule Var.
+                { title: 'Avg. Schedule Var.', value: `${metrics.avgScheduleVarianceSign}${metrics.avgScheduleVariance}%`, icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ${metrics.avgScheduleVarianceValue > 0 ? 'text-red-500' : 'text-green-500'}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 4v12l-4-2-4 2V4M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>`, color: metrics.avgScheduleVarianceValue > 0 ? 'red' : 'green' },
+                
+                // 4. Average Actual Spend (Unit changed to B)
+                { title: 'Average Actual Spend (B)', value: `\$${metrics.avgActualSpend}`, icon: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>`, color: 'blue' }, 
+            ];
+
+            kpiContainer.innerHTML = cards.map(card => `
+                <div class="bg-white p-5 rounded-xl shadow-md flex items-center space-x-4">
+                    <div class="p-3 rounded-full bg-${card.color}-100">
+                        ${card.icon}
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">${card.title}</p>
+                        <p class="text-2xl font-bold text-gray-900">${card.value}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Update the main title to reflect the number of projects being displayed
+            const titleElement = document.getElementById('main-title');
+            titleElement.textContent = `Project Variance Analysis Dashboard (${metrics.totalProjects} Projects)`;
+        }
+
+        // --- 4. CHART RENDERING ---
+        
+        function renderCharts(metrics) {
+            // Destroy existing charts to prepare for new data
+            Object.values(currentCharts).forEach(chart => chart.destroy());
+            currentCharts = {};
+
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#4b5563'; // Gray-600
+
+            // 4.1. Project Cost Variance Chart (Bar Chart)
+            currentCharts.costChart = new Chart(document.getElementById('completionChart'), {
+                type: 'bar',
+                data: {
+                    labels: metrics.projectNames,
+                    datasets: [{
+                        label: 'Cost Variance (%)',
+                        data: metrics.costVariances,
+                        backgroundColor: metrics.costVariances.map(rate => {
+                            if (rate <= 0) return '#10b981'; 
+                            if (rate > 50) return '#f97316'; 
+                            return '#facc15'; 
+                        }), 
+                        borderColor: '#ffffff',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', 
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    let value = context.parsed.x;
+                                    let sign = value >= 0 ? '+' : '';
+                                    if (context.parsed.x !== null) { label += sign + value + '%'; }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: false, 
+                            title: { display: true, text: 'Variance (%)' },
+                            grid: { display: false }
+                        },
+                        y: {
+                            grid: { color: '#f3f4f6' }
+                        }
+                    }
+                }
+            });
+
+            // 4.2. Project Schedule Variance Chart (Bar Chart)
+            currentCharts.scheduleChart = new Chart(document.getElementById('budgetChart'), {
+                type: 'bar',
+                data: {
+                    labels: metrics.projectNames,
+                    datasets: [{
+                        label: 'Schedule Variance (%)',
+                        data: metrics.scheduleVariances,
+                        backgroundColor: metrics.scheduleVariances.map(rate => {
+                            if (rate <= 0) return '#10b981'; 
+                            if (rate > 50) return '#f97316'; 
+                            return '#ef4444'; 
+                        }), 
+                        borderColor: '#ffffff',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', 
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    let value = context.parsed.x;
+                                    let sign = value >= 0 ? '+' : '';
+                                    if (context.parsed.x !== null) { label += sign + value + '%'; }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: false,
+                            title: { display: true, text: 'Variance (%)' },
+                            grid: { display: false }
+                        },
+                        y: {
+                            grid: { color: '#f3f4f6' }
+                        }
+                    }
+                }
+            });
+
+            // 4.3. Project Timeline Gantt Chart
+            currentCharts.ganttChart = new Chart(document.getElementById('ganttChart'), {
+                type: 'bar',
+                data: {
+                    labels: metrics.projectNames,
+                    datasets: [{
+                        label: 'Project Duration (FID to Actual ISD)',
+                        data: metrics.ganttData,
+                        backgroundColor: metrics.ganttData.map(item => item.isDelayed ? '#ef4444' : '#10b981'), 
+                        borderColor: '#ffffff',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', 
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return context[0].label;
+                                },
+                                label: function(context) {
+                                    const data = context.raw.x;
+                                    const startYear = data[0];
+                                    const endYear = data[1];
+                                    const duration = endYear - startYear;
+                                    return `Duration: ${startYear} - ${endYear} (${duration} years)`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: 2008, 
+                            max: 2035, 
+                            title: { display: true, text: 'Year' },
+                            ticks: {
+                                stepSize: 2, 
+                                callback: function(value, index, values) {
+                                    if (Math.floor(value) === value) {
+                                        return value;
+                                    }
+                                }
+                            },
+                            grid: { color: '#f3f4f6' }
+                        },
+                        y: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 4.4. Project Performance Bubble Chart
+            currentCharts.bubbleChart = new Chart(document.getElementById('bubbleChart'), {
+                type: 'bubble',
+                data: {
+                    datasets: metrics.bubbleDatasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    return context[0].raw.name; 
+                                },
+                                label: function(context) {
+                                    const data = context.raw;
+                                    const costVar = data.x >= 0 ? `+${data.x.toFixed(1)}%` : `${data.x.toFixed(1)}%`;
+                                    const schedVar = data.y >= 0 ? `+${data.y.toFixed(1)}%` : `${data.y.toFixed(1)}%`;
+                                    const actualCost = data.actualCost.toFixed(1);
+                                    
+                                    const labels = [
+                                        `Cost Variance: ${costVar}`,
+                                        `Schedule Variance: ${schedVar}`,
+                                        `Actual Cost (B): $${actualCost}`,
+                                    ];
+                                    return labels;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: false,
+                            title: { display: true, text: 'Cost Variance (%) (Over Budget is Positive)' },
+                            grid: { color: '#f3f4f6' }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            title: { display: true, text: 'Schedule Variance (%) (Delay is Positive)' },
+                            grid: { color: '#f3f4f6' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- 5. FILTERING LOGIC ---
+
+        function applyFilter(sector) {
+            currentFilter = sector;
+            
+            // 1. Filter the data based on the selected sector
+            if (sector === 'All') {
+                filteredProjects = allProjects;
+            } else {
+                filteredProjects = allProjects.filter(p => p.sector === sector);
+            }
+
+            // 2. Recalculate metrics
+            const metrics = calculateMetrics(filteredProjects);
+            
+            // 3. Update UI
+            renderKpiCards(metrics);
+            renderCharts(metrics);
+            // The updateActiveButton function is no longer needed for a select box
+        }
+        
+        // --- 6. INITIALIZATION ---
+        window.onload = function() {
+            // Initial render with 'All' projects
+            applyFilter('All');
+        };
+
+    </script>
+</body>
+</html>
