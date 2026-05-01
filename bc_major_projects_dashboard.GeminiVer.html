@@ -62,7 +62,7 @@
   .header-inner {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 32px 40px 28px;
+    padding: 32px 40px 10px;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -80,14 +80,14 @@
   }
   .bc-badge span {
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.12em;
     color: var(--gold-light);
     text-transform: uppercase;
   }
   header h1 {
     font-family: 'DM Serif Display', serif;
-    font-size: 30px;
+    font-size: 34px;
     color: var(--white);
     line-height: 1.15;
     font-weight: 400;
@@ -96,11 +96,34 @@
     color: var(--gold-light);
     font-style: italic;
   }
+  .header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .llm-disclaimer {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    max-width: 360px;
+    line-height: 1.5;
+    border-left: 1px solid rgba(196,154,60,0.3);
+    padding-left: 18px;
+    margin-top: 4px;
+  }
+  .llm-disclaimer a {
+    color: var(--gold-light);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(232,196,106,0.3);
+  }
+  .llm-disclaimer a:hover {
+    border-bottom-color: var(--gold-light);
+  }
   .header-meta {
     text-align: right;
   }
   .header-meta p {
-    font-size: 11px;
+    font-size: 12px;
     color: rgba(255,255,255,0.45);
     font-family: 'DM Mono', monospace;
     line-height: 1.8;
@@ -110,6 +133,40 @@
     font-weight: 500;
   }
 
+  /* TAB NAVIGATION */
+  .tab-nav {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 40px 20px;
+    display: flex;
+    gap: 12px;
+    background: var(--navy);
+  }
+  .tab-btn {
+    padding: 12px 24px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.65);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tab-btn:hover { 
+    background: rgba(255,255,255,0.15); 
+    color: var(--white);
+    border-color: rgba(255,255,255,0.3);
+  }
+  .tab-btn.active { 
+    background: var(--gold); 
+    color: var(--navy); 
+    border-color: var(--gold);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
   /* MAIN */
   main {
     max-width: 1400px;
@@ -117,13 +174,21 @@
     padding: 36px 40px 60px;
   }
 
+  .view-container { display: none; }
+  .view-container.active { display: block; animation: fadeIn 0.3s ease-out; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .section-label {
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--text-light);
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -167,7 +232,7 @@
   .kpi-tile.active::before { background: var(--s5); }
   
   .kpi-label {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -176,13 +241,13 @@
   }
   .kpi-value {
     font-family: 'DM Serif Display', serif;
-    font-size: 42px;
+    font-size: 46px;
     color: var(--navy);
     line-height: 1;
     margin-bottom: 4px;
   }
   .kpi-sub {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-light);
   }
   .kpi-sub strong { color: var(--text-mid); font-weight: 500; }
@@ -198,13 +263,13 @@
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 22px 24px;
+    padding: 24px 28px;
     display: flex;
     flex-direction: column;
-    min-height: 420px;
+    min-height: 440px;
   }
   .chart-title {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--navy);
     margin-bottom: 18px;
@@ -216,7 +281,7 @@
   .bar-row:hover .bar-label { color: var(--navy); }
   .bar-meta { display: flex; justify-content: space-between; align-items: baseline; }
   .bar-label {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-mid);
     transition: color 0.15s;
     white-space: nowrap;
@@ -226,21 +291,21 @@
   }
   .bar-count {
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--navy);
     flex-shrink: 0;
     margin-left: 8px;
   }
   .bar-track {
-    height: 6px;
+    height: 7px;
     background: #eef0f4;
-    border-radius: 3px;
+    border-radius: 4px;
     overflow: hidden;
   }
   .bar-fill {
     height: 100%;
-    border-radius: 3px;
+    border-radius: 4px;
     transition: width 0.8s cubic-bezier(0.22,1,0.36,1);
   }
   .bar-row.active-filter .bar-label { color: var(--navy); font-weight: 600; }
@@ -250,7 +315,7 @@
   .donut-container {
     position: relative;
     width: 100%;
-    max-width: 220px;
+    max-width: 240px;
     margin: 0 auto 10px;
     display: flex;
     justify-content: center;
@@ -274,13 +339,13 @@
   }
   .donut-center-value {
     font-family: 'DM Serif Display', serif;
-    font-size: 28px;
+    font-size: 32px;
     line-height: 1;
     color: var(--navy);
     display: block;
   }
   .donut-center-label {
-    font-size: 9px;
+    font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--text-light);
@@ -291,28 +356,28 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 11.5px;
+    font-size: 13px;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 6px 10px;
     border-radius: 4px;
     transition: background 0.2s;
   }
   .legend-item:hover { background: #f5f6f9; }
   .legend-item.active { background: #f0f1f4; font-weight: 600; }
   .legend-item.inactive { opacity: 0.4; }
-  .legend-label-wrap { display: flex; align-items: center; gap: 8px; }
-  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .legend-label-wrap { display: flex; align-items: center; gap: 10px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
 
-  /* SECTOR COLORS */
-  .fill-energy { stroke: var(--energy-color); background: var(--energy-color); }
-  .fill-mining { stroke: var(--mining-color); background: var(--mining-color); }
-  .fill-gas { stroke: var(--gas-color); background: var(--gas-color); }
-  .fill-region { background: var(--navy-light); }
-  .fill-s1 { background: var(--s1); }
-  .fill-s2 { background: var(--s2); }
-  .fill-s3 { background: var(--s3); }
-  .fill-s4 { background: var(--s4); }
-  .fill-s5 { background: var(--s5); }
+  /* CHART & TIMELINE COLORS (FORCE APPLY) */
+  .fill-energy, .energy { stroke: var(--energy-color) !important; background: var(--energy-color) !important; }
+  .fill-mining, .mining { stroke: var(--mining-color) !important; background: var(--mining-color) !important; }
+  .fill-gas, .gas { stroke: var(--gas-color) !important; background: var(--gas-color) !important; }
+  .fill-region { background: var(--navy-light) !important; }
+  .fill-s1 { background: var(--s1) !important; }
+  .fill-s2 { background: var(--s2) !important; }
+  .fill-s3 { background: var(--s3) !important; }
+  .fill-s4 { background: var(--s4) !important; }
+  .fill-s5 { background: var(--s5) !important; }
 
   /* TOOLBAR & FILTERS */
   .toolbar {
@@ -330,7 +395,7 @@
     align-items: center;
   }
   .filter-label-txt {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-light);
     font-weight: 500;
     letter-spacing: 0.04em;
@@ -339,10 +404,10 @@
   .pill {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 5px 12px;
+    gap: 6px;
+    padding: 6px 14px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     border: 1.5px solid var(--border);
     background: var(--white);
@@ -353,14 +418,14 @@
   }
   .pill:hover { border-color: var(--navy); color: var(--navy); }
   .pill.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
-  .pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   
   .action-btns { display: flex; gap: 8px; }
   .btn-secondary {
     font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
-    padding: 6px 12px;
+    padding: 8px 16px;
     border-radius: 6px;
     border: 1.5px solid var(--border);
     background: var(--white);
@@ -368,12 +433,12 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     transition: all 0.15s;
   }
   .btn-secondary:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
   .clear-btn {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--gold);
     font-weight: 600;
     cursor: pointer;
@@ -397,40 +462,40 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 24px;
+    padding: 20px 24px;
     border-bottom: 1px solid var(--border);
   }
-  .table-count { font-size: 13px; color: var(--text-mid); }
+  .table-count { font-size: 14px; color: var(--text-mid); }
   .table-count strong { color: var(--navy); font-weight: 600; }
   .search-wrap { position: relative; }
   .search-wrap input {
     font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    padding: 7px 14px 7px 34px;
+    font-size: 14px;
+    padding: 9px 14px 9px 38px;
     border: 1.5px solid var(--border);
     border-radius: 6px;
     color: var(--text-dark);
     background: var(--cream);
-    width: 240px;
+    width: 260px;
     outline: none;
     transition: border-color 0.15s;
   }
   .search-wrap input:focus { border-color: var(--navy); }
   .search-icon {
     position: absolute;
-    left: 11px; top: 50%;
+    left: 14px; top: 50%;
     transform: translateY(-50%);
-    width: 14px; height: 14px;
+    width: 16px; height: 16px;
     color: var(--text-light);
   }
 
   .table-container { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 900px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 1000px; }
   thead th {
     background: #f5f6f9;
-    padding: 12px 14px;
+    padding: 14px 16px;
     text-align: left;
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.07em;
     text-transform: uppercase;
@@ -452,18 +517,18 @@
   tbody tr:hover { background: #f9fafc; }
   tbody tr.expanded { background: #f5f7fb; border-bottom: none; }
 
-  td { padding: 12px 14px; vertical-align: middle; }
-  td.num { font-family: 'DM Mono', monospace; color: var(--text-light); font-size: 11px; width: 40px; }
+  td { padding: 14px 16px; vertical-align: middle; }
+  td.num { font-family: 'DM Mono', monospace; color: var(--text-light); font-size: 12px; width: 50px; }
   td.name-cell { font-weight: 600; color: var(--navy); }
-  td.name-cell small { display: block; font-weight: 400; font-size: 11px; color: var(--text-light); margin-top: 2px; }
+  td.name-cell small { display: block; font-weight: 400; font-size: 12px; color: var(--text-light); margin-top: 4px; }
 
   .sector-badge {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 3px 8px;
+    gap: 6px;
+    padding: 4px 10px;
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
   }
@@ -474,14 +539,14 @@
   .stage-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 3px 9px;
+    gap: 8px;
+    padding: 4px 10px;
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
   }
-  .stage-badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .stage-badge .dot { width: 7px; height: 7px; border-radius: 50%; }
   .stage-1 { background: rgba(232,196,106,0.18); color: #8a6e1a; } .stage-1 .dot { background: #e8c46a; }
   .stage-2 { background: rgba(240,160,74,0.15); color: #8a4e1a; } .stage-2 .dot { background: #f0a04a; }
   .stage-3 { background: rgba(91,155,213,0.15); color: #2a5c8a; } .stage-3 .dot { background: #5b9bd5; }
@@ -492,41 +557,41 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 20px; height: 20px;
+    width: 22px; height: 22px;
     background: var(--gold-dim);
     border-radius: 50%;
-    font-size: 11px;
+    font-size: 12px;
   }
-  td.mono { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--text-mid); }
+  td.mono { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-mid); }
 
   /* EXPANDED ROW */
   tr.detail-row td { padding: 0; border-bottom: 1px solid #e8eaf0; }
   .detail-inner {
-    padding: 20px 54px 24px;
+    padding: 24px 60px 32px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
+    gap: 30px;
     background: #f5f7fb;
-    border-left: 4px solid var(--navy);
+    border-left: 5px solid var(--navy);
     animation: slideDown 0.25s ease-out;
   }
   @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
   .detail-item label {
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--text-light);
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
-  .detail-item p { font-size: 13px; color: var(--text-mid); line-height: 1.4; }
+  .detail-item p { font-size: 15px; color: var(--text-mid); line-height: 1.5; }
   .detail-item p strong { color: var(--navy); }
   
   .gov-link {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     color: var(--teal);
     text-decoration: none;
     font-weight: 600;
@@ -534,15 +599,105 @@
   }
   .gov-link:hover { color: var(--navy); text-decoration: underline; }
 
-  /* EMPTY STATE */
-  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+  /* TIMELINE VIEW STYLES */
+  .timeline-grid {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 30px;
+    overflow-x: auto;
+  }
+  .timeline-header {
+    display: grid;
+    grid-template-columns: 260px repeat(12, 1fr);
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 14px;
+    margin-bottom: 12px;
+  }
+  .timeline-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: center;
+    font-weight: 600;
+  }
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 260px repeat(12, 1fr);
+    align-items: center;
+    height: 40px;
+    border-bottom: 1px solid #f0f1f4;
+  }
+  .timeline-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 20px;
+  }
+  .timeline-bar-container {
+    grid-column: 2 / span 12;
+    height: 14px;
+    background: #f0f2f6;
+    border-radius: 7px;
+    position: relative;
+    overflow: hidden;
+  }
+  .timeline-bar {
+    position: absolute;
+    height: 100%;
+    border-radius: 7px;
+    transition: width 1s ease;
+  }
+
+  /* INSIGHTS VIEW STYLES */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .insight-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 32px;
+  }
+  .insight-icon {
+    font-size: 28px;
+    margin-bottom: 18px;
+    display: block;
+  }
+  .insight-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--navy);
+    margin-bottom: 14px;
+  }
+  .insight-text {
+    font-size: 16px;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+  .insight-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--teal-light);
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
 
   /* FOOTER */
   footer {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 40px 32px;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-light);
     font-family: 'DM Mono', monospace;
     display: flex;
@@ -552,7 +707,11 @@
   footer a:hover { text-decoration: underline; }
 
   /* RESPONSIVE */
-  @media (max-width: 1100px) { .charts-row { grid-template-columns: 1fr 1fr; } .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 1100px) { 
+    .charts-row { grid-template-columns: 1fr 1fr; } 
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .insights-grid { grid-template-columns: 1fr; }
+  }
   @media (max-width: 700px) {
     main, footer { padding-left: 20px; padding-right: 20px; }
     .header-inner { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
@@ -561,6 +720,9 @@
     .search-wrap input { width: 100%; }
     .toolbar { flex-direction: column; align-items: flex-start; }
     footer { flex-direction: column; gap: 10px; }
+    .tab-nav { padding: 0 20px; gap: 15px; overflow-x: auto; }
+    .header-title-row { gap: 12px; }
+    .llm-disclaimer { border-left: none; padding-left: 0; margin-top: 10px; }
   }
 </style>
 </head>
@@ -570,7 +732,12 @@
   <div class="header-inner">
     <div class="header-left">
       <div class="bc-badge"><span>British Columbia · Look West Strategy</span></div>
-      <h1>Major Projects <em>Dashboard</em></h1>
+      <div class="header-title-row">
+        <h1>Major Projects <em>Dashboard</em></h1>
+        <div class="llm-disclaimer">
+          This dashboard was vibe-coded by an LLM so there may be errors. The <a href="https://www2.gov.bc.ca/gov/content/employment-business/major-projects" target="_blank">original page on the BC Government website</a> should be considered the primary source.
+        </div>
+      </div>
     </div>
     <div class="header-meta">
       <p><strong>Source:</strong> BC Government Major Projects Registry</p>
@@ -578,114 +745,191 @@
       <p id="header-stats">35 projects · 3 sectors · 8 regions</p>
     </div>
   </div>
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="timeline">Project Timeline</button>
+    <button class="tab-btn" data-tab="analysis">Economic Analysis</button>
+  </nav>
 </header>
 
 <main>
-  <!-- KPI ROW -->
-  <div class="section-label">Performance Indicators</div>
-  <div class="kpi-row">
-    <div class="kpi-tile total">
-      <div class="kpi-label">Current View</div>
-      <div class="kpi-value" id="kpi-total">0</div>
-      <div class="kpi-sub">Total active projects</div>
-    </div>
-    <div class="kpi-tile priority">
-      <div class="kpi-label">Priority Projects</div>
-      <div class="kpi-value" id="kpi-priority">0</div>
-      <div class="kpi-sub"><strong id="kpi-priority-pct">0%</strong> of current view</div>
-    </div>
-    <div class="kpi-tile active">
-      <div class="kpi-label">Under Construction</div>
-      <div class="kpi-value" id="kpi-construction">0</div>
-      <div class="kpi-sub">Stage 5 implementation</div>
-    </div>
-    <div class="kpi-tile jobs">
-      <div class="kpi-label">Est. Job Capacity</div>
-      <div class="kpi-value" id="kpi-jobs">0</div>
-      <div class="kpi-sub">Total construction positions</div>
-    </div>
-  </div>
-
-  <!-- CHARTS ROW -->
-  <div class="section-label">Composition</div>
-  <div class="charts-row">
-    <div class="chart-card">
-      <div class="chart-title">Sector Allocation</div>
-      <div id="chart-sector"></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Maturity Stage</div>
-      <div class="bar-chart" id="chart-stage"></div>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Economic Regions</div>
-      <div class="bar-chart" id="chart-region"></div>
-    </div>
-  </div>
-
-  <!-- TOOLBAR -->
-  <div class="section-label">Inventory</div>
-  <div class="toolbar">
-    <div class="filter-bar" id="filter-bar">
-      <span class="filter-label-txt">Focus:</span>
-      <span class="pill active" data-filter="all">All Projects</span>
-      <span class="pill" data-filter="priority">⭐ Priority</span>
-      <span class="pill" data-filter="energy"><span class="pill-dot" style="background:#1d7a8a"></span>Energy</span>
-      <span class="pill" data-filter="mining"><span class="pill-dot" style="background:#b85c38"></span>Mining</span>
-      <span class="pill" data-filter="gas"><span class="pill-dot" style="background:#6b7a3e"></span>Gas</span>
-      <button class="clear-btn" id="clear-btn">✕ Reset Charts</button>
-    </div>
-    <div class="action-btns">
-        <button class="btn-secondary" onclick="exportCSV()">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            Export CSV
-        </button>
-    </div>
-  </div>
-
-  <!-- TABLE -->
-  <div class="table-wrapper">
-    <div class="table-header-bar">
-      <div class="table-count"><strong id="visible-count">0</strong> projects matching filters</div>
-      <div class="search-wrap">
-        <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" i1="13" x2="18" i2="18"/>
-        </svg>
-        <input type="text" id="search-input" placeholder="Search by name, proponent, or city...">
+  <!-- OVERVIEW TAB -->
+  <div id="overview" class="view-container active">
+    <!-- KPI ROW -->
+    <div class="section-label">Performance Indicators</div>
+    <div class="kpi-row">
+      <div class="kpi-tile total">
+        <div class="kpi-label">Current View</div>
+        <div class="kpi-value" id="kpi-total">0</div>
+        <div class="kpi-sub">Total active projects</div>
+      </div>
+      <div class="kpi-tile priority">
+        <div class="kpi-label">Priority Projects</div>
+        <div class="kpi-value" id="kpi-priority">0</div>
+        <div class="kpi-sub"><strong id="kpi-priority-pct">0%</strong> of current view</div>
+      </div>
+      <div class="kpi-tile active">
+        <div class="kpi-label">Under Construction</div>
+        <div class="kpi-value" id="kpi-construction">0</div>
+        <div class="kpi-sub">Stage 5 implementation</div>
+      </div>
+      <div class="kpi-tile jobs">
+        <div class="kpi-label">Est. Job Capacity</div>
+        <div class="kpi-value" id="kpi-jobs">0</div>
+        <div class="kpi-sub">Total construction positions</div>
       </div>
     </div>
 
-    <div class="table-container">
-        <table id="projects-table">
-          <thead>
-            <tr>
-              <th data-col="num">ID <span class="sort-indicator">↕</span></th>
-              <th data-col="name">Project Name <span class="sort-indicator">↕</span></th>
-              <th data-col="sector">Sector <span class="sort-indicator">↕</span></th>
-              <th data-col="stage">Stage <span class="sort-indicator">↕</span></th>
-              <th data-col="region">Region <span class="sort-indicator">↕</span></th>
-              <th data-col="jobs">Jobs <span class="sort-indicator">↕</span></th>
-              <th data-col="fid">FID <span class="sort-indicator">↕</span></th>
-              <th data-col="constStart">Start <span class="sort-indicator">↕</span></th>
-              <th data-col="completion">End <span class="sort-indicator">↕</span></th>
-              <th data-col="priority" style="text-align:center">⭐ <span class="sort-indicator">↕</span></th>
-            </tr>
-          </thead>
-          <tbody id="table-body"></tbody>
-        </table>
+    <!-- CHARTS ROW -->
+    <div class="section-label">Composition</div>
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Sector Allocation</div>
+        <div id="chart-sector"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Maturity Stage</div>
+        <div class="bar-chart" id="chart-stage"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Economic Regions</div>
+        <div class="bar-chart" id="chart-region"></div>
+      </div>
     </div>
 
-    <div class="empty-state" id="empty-state" style="display:none">
-      <div style="font-size:32px; margin-bottom:12px">🔍</div>
-      <p style="font-weight:600; color:var(--navy)">No matches found</p>
-      <p style="font-size:13px">Try adjusting your filters or search term.</p>
+    <!-- TOOLBAR -->
+    <div class="section-label">Inventory</div>
+    <div class="toolbar">
+      <div class="filter-bar" id="filter-bar">
+        <span class="filter-label-txt">Focus:</span>
+        <span class="pill active" data-filter="all">All Projects</span>
+        <span class="pill" data-filter="priority">⭐ Priority</span>
+        <span class="pill" data-filter="energy"><span class="pill-dot" style="background:#1d7a8a"></span>Energy</span>
+        <span class="pill" data-filter="mining"><span class="pill-dot" style="background:#b85c38"></span>Mining</span>
+        <span class="pill" data-filter="gas"><span class="pill-dot" style="background:#6b7a3e"></span>Gas</span>
+        <button class="clear-btn" id="clear-btn">✕ Reset Charts</button>
+      </div>
+      <div class="action-btns">
+          <button class="btn-secondary" onclick="exportCSV()">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Export CSV
+          </button>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrapper">
+      <div class="table-header-bar">
+        <div class="table-count"><strong id="visible-count">0</strong> projects matching filters</div>
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" y1="13" x2="18" y2="18"/>
+          </svg>
+          <input type="text" id="search-input" placeholder="Search by name, proponent, or city...">
+        </div>
+      </div>
+
+      <div class="table-container">
+          <table id="projects-table">
+            <thead>
+              <tr>
+                <th data-col="num">ID <span class="sort-indicator">↕</span></th>
+                <th data-col="name">Project Name <span class="sort-indicator">↕</span></th>
+                <th data-col="sector">Sector <span class="sort-indicator">↕</span></th>
+                <th data-col="stage">Stage <span class="sort-indicator">↕</span></th>
+                <th data-col="region">Region <span class="sort-indicator">↕</span></th>
+                <th data-col="jobs">Jobs <span class="sort-indicator">↕</span></th>
+                <th data-col="fid">FID <span class="sort-indicator">↕</span></th>
+                <th data-col="constStart">Start <span class="sort-indicator">↕</span></th>
+                <th data-col="completion">End <span class="sort-indicator">↕</span></th>
+                <th data-col="priority" style="text-align:center">⭐ <span class="sort-indicator">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+      </div>
+
+      <div class="empty-state" id="empty-state" style="display:none">
+        <div style="font-size:32px; margin-bottom:12px">🔍</div>
+        <p style="font-weight:600; color:var(--navy)">No matches found</p>
+        <p style="font-size:15px">Try adjusting your filters or search term.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE TAB -->
+  <div id="timeline" class="view-container">
+    <div class="section-label">Construction Outlook</div>
+    <div class="timeline-grid">
+      <div class="timeline-header" id="timeline-years-header">
+        <!-- Years dynamically injected -->
+      </div>
+      <div id="timeline-rows">
+        <!-- Rows dynamically injected -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYSIS TAB -->
+  <div id="analysis" class="view-container">
+    <div class="section-label">Strategic Insights</div>
+    <div class="insights-grid">
+      
+      <div class="insight-card">
+        <span class="insight-tag">Resource Outlook</span>
+        <span class="insight-icon">🌊</span>
+        <h3 class="insight-title">The 2028-2029 "Construction Wave"</h3>
+        <p class="insight-text">
+          There is a massive concentration of project starts scheduled for 2028 and 2029. 
+          Nearly 60% of the Clean Energy projects (Highland Valley, K2, Mount Mabel, Nilhts'i) 
+          are all targeting this 24-month window for construction. This suggests a potential 
+          localized labor and equipment bottleneck in the Thompson-Okanagan and Northeast regions.
+        </p>
+      </div>
+
+      <div class="insight-card">
+        <span class="insight-tag">Employment Mix</span>
+        <span class="insight-icon">🛠️</span>
+        <h3 class="insight-title">Mining vs. Energy Sustainability</h3>
+        <p class="insight-text">
+          Energy and Gas projects are construction-heavy with massive initial job peaks but low 
+          permanent operational staffing. Conversely, Mining projects provide a much higher ratio 
+          of long-term operational jobs (e.g., Blackwater #12 provides 1,200 permanent roles). 
+          Mining remains the core driver of community-level economic stability.
+        </p>
+      </div>
+
+      <div class="insight-card">
+        <span class="insight-tag">Regional Hubs</span>
+        <span class="insight-icon">📍</span>
+        <h3 class="insight-title">Regional Specialization</h3>
+        <p class="insight-text">
+          Thompson-Okanagan has rapidly evolved into B.C.'s Clean Energy Hub, hosting 45% of 
+          renewable projects. Meanwhile, the North Coast serves as the Industrial Gateway, 
+          hosting massive infrastructure (NCTL) and the province's largest Natural Gas processing 
+          and export developments.
+        </p>
+      </div>
+
+      <div class="insight-card">
+        <span class="insight-tag">Reconciliation</span>
+        <span class="insight-icon">🤝</span>
+        <h3 class="insight-title">Indigenous Leadership</h3>
+        <p class="insight-text">
+          A defining feature of the "Look West" strategy is First Nations partnership. 
+          100% of the Clean Energy projects list First Nations as primary or joint proponents. 
+          The transition to a clean economy in B.C. is moving beyond consultation into direct 
+          ownership and equity participation by Indigenous communities.
+        </p>
+      </div>
+
     </div>
   </div>
 </main>
 
 <footer>
   <p>© 2026 British Columbia Look West Strategy · Data: <a href="https://www2.gov.bc.ca/gov/content/employment-business/major-projects" target="_blank">BC Major Projects Registry</a></p>
-  <p>Interact with charts or table rows for details</p>
+  <p>Interact with tabs to explore the dataset</p>
 </footer>
 
 <script>
@@ -697,18 +941,18 @@ const PROJECTS = [
   [4,"m.ah a temEEwuh Solar","energy",2,"Stage 2: Consultation / Assessments","Thompson-Okanagan","Logan Lake (Oregon Jack Creek, BluEarth Renewables)","N/A","N/A","2029","TBD","200","5",true,"Logan Lake", "mats"],
   [5,"Mount Mabel Wind","energy",3,"Stage 3: Permitting","Thompson-Okanagan","Mount Mabel Wind Inc. (Lower Nicola Indian Band, Capstone)","N/A","N/A","2028","2031","275","N/A",true,"Logan Lake area", "mmw"],
   [6,"Nilhts'i Ecoener Wind","energy",3,"Stage 3: Permitting","Cariboo","Nilhts'i Ecoener Energy Corp. (Lheidli T'enneh, Ecoener)","N/A","N/A","2029","2031","100","TBC",true,"Prince George", "new"],
-  [7,"Ni Ti Mountain Wind","energy",3,"Stage 3: Permitting","Nechako","General Partnership (Stellat'en First Nation, Innergex)","N/A","N/A","Summer 2027","2030","200","8",true,"Fraser Lake", "ntmw"],
-  [8,"sniwt i? k?ul?mntn Wind","energy",3,"Stage 3: Permitting","Thompson-Okanagan","Elkhart Wind LP (Upper Nicola Band, Elemental Energy)","N/A","N/A","Spring 2027","Fall 2028","100","10",true,"Merritt", "skw"],
-  [9,"Stewart Creek Wind","energy",3,"Stage 3: Permitting","Northeast","Stewart Creek Power Inc. (West Moberly First Nation, Innergex)","N/A","N/A","Summer 2028","2030","200","10",true,"Fort St. John", "scw"],
+  [7,"Ni Ti Mountain Wind","energy",3,"Stage 3: Permitting","Nechako","General Partnership (Stellat'en First Nation, Innergex)","N/A","N/A","2027","2030","200","8",true,"Fraser Lake", "ntmw"],
+  [8,"sniwt i? k?ul?mntn Wind","energy",3,"Stage 3: Permitting","Thompson-Okanagan","Elkhart Wind LP (Upper Nicola Band, Elemental Energy)","N/A","N/A","2027","2028","100","10",true,"Merritt", "skw"],
+  [9,"Stewart Creek Wind","energy",3,"Stage 3: Permitting","Northeast","Stewart Creek Power Inc. (West Moberly First Nation, Innergex)","N/A","N/A","2028","2030","200","10",true,"Fort St. John", "scw"],
   [10,"Taylor Wind","energy",3,"Stage 3: Permitting","Northeast","Taylor Wind Project Inc. (Saulteau First Nations, EDF Renewables)","N/A","N/A","2028","2031","150","TBC",true,"Taylor", "tw"],
   [11,"Yeyus Energy Project","energy",3,"Stage 3: Permitting","Vancouver Island/Coast","Yeyus Energy (Wei Wai Kum First Nation, Capstone Infrastructure)","N/A","N/A","2028","2031","275","TBC",true,"Campbell River", "yep"],
-  [12,"Blackwater Mine – Phase 2","mining",3,"Stage 3: Permitting","Cariboo","Artemis Gold Inc.","$1.44B","Dec 2025","Jan 2026","Late 2028","1500","1200",false,"Vanderhoof", "bm"],
-  [13,"Baptiste Nickel Project","mining",2,"Stage 2: Consultation / Assessments","Nechako","FPX Nickel Corporation","$3.9B","TBD","~2032","TBD","1300","700",false,"Fort St. James area", "bnp"],
-  [14,"Copper Mountain Mine – New Ingerbelle Ext.","mining",5,"Stage 5: Construction","Thompson-Okanagan","Hudbay Minerals","$290M","Feb 2026","2026","2040+","0","830",false,"Princeton Area", "cmm"],
+  [12,"Blackwater Mine – Phase 2","mining",3,"Stage 3: Permitting","Cariboo","Artemis Gold Inc.","$1.44B","Dec 2025","2026","2028","1500","1200",false,"Vanderhoof", "bm"],
+  [13,"Baptiste Nickel Project","mining",2,"Stage 2: Consultation / Assessments","Nechako","FPX Nickel Corporation","$3.9B","TBD","2032","TBD","1300","700",false,"Fort St. James area", "bnp"],
+  [14,"Copper Mountain Mine – New Ingerbelle Ext.","mining",5,"Stage 5: Construction","Thompson-Okanagan","Hudbay Minerals","$290M","Feb 2026","2026","2040","0","830",false,"Princeton Area", "cmm"],
   [15,"Eskay Creek Mine","mining",5,"Stage 5: Construction","North Coast","Skeena Gold+Silver","N/A","Jan 2026","2026","TBD","949","771",true,"Stewart area", "ecm"],
   [16,"Fording River Operations – Extension","mining",2,"Stage 2: Consultation / Assessments","Kootenay","Elk Valley Resources (EVR)","$3B","TBD","2029","TBD","0","1500",false,"Elk Valley", "fro"],
-  [17,"Greenhills Operations – Cougar 8/9","mining",1,"Stage 1: Planning","Kootenay","Elk Valley Resources (EVR)","N/A","TBD","2029","~2045","140","950",false,"Greenhills", "go"],
-  [18,"Highland Valley Copper Mine – Extension","mining",5,"Stage 5: Construction","Thompson-Okanagan","Teck Resources","$2.1–2.4B","Jun 2025","Aug 2025","~mid-2040s","2900","200",true,"Logan Lake", "hvcm"],
+  [17,"Greenhills Operations – Cougar 8/9","mining",1,"Stage 1: Planning","Kootenay","Elk Valley Resources (EVR)","N/A","TBD","2029","2045","140","950",false,"Greenhills", "go"],
+  [18,"Highland Valley Copper Mine – Extension","mining",5,"Stage 5: Construction","Thompson-Okanagan","Teck Resources","$2.1–2.4B","Jun 2025","2025","2040","2900","200",true,"Logan Lake", "hvcm"],
   [19,"KSM Mine","mining",3,"Stage 3: Permitting","North Coast","Seabridge Gold","N/A","TBD","TBD","TBD","1550","1040",false,"Stewart area", "ksm"],
   [20,"Mount Milligan Mine – 2035 Expansion","mining",5,"Stage 5: Construction","Cariboo","Centerra Gold Inc.","$400M","Jan 2026","2026","2035","0","574",true,"Fort St. James area", "mmm"],
   [21,"New Polaris Project","mining",2,"Stage 2: Consultation / Assessments","Nechako","Canagold Resources","$290M","TBD","TBD","TBD","125","215",false,"Atlin", "npp"],
@@ -716,32 +960,78 @@ const PROJECTS = [
   [23,"Red Mountain Mine","mining",3,"Stage 3: Permitting","North Coast","Cambria Gold Mines","$105M","TBD","TBD","TBD","250","200",false,"Stewart", "rmm"],
   [24,"Trail Operations","mining",3,"Stage 3: Permitting","Kootenay","Teck Resources","$750M","TBD","TBD","TBD","450","106",false,"Near Trail", "to"],
   [25,"Yellowhead Copper Project","mining",2,"Stage 2: Consultation / Assessments","Thompson-Okanagan","Taseko Mines","$1.58B","TBD","TBD","TBD","2000","590",false,"Vavenby area", "ycp"],
-  [26,"Cedar LNG","gas",5,"Stage 5: Construction","North Coast","Haisla Nation & Pembina Pipeline Corporation","$4B","Jun 2024","2024","Late 2028","500","100",true,"Kitimat", "clng"],
-  [27,"Enbridge T-North Expansion (Aspen Point)","gas",5,"Stage 5: Construction","Northeast","Westcoast Energy (Enbridge)","$1.2B","May 2025","Apr 2025","Late 2026","300","N/A",false,"Fort St. John area", "etne"],
-  [28,"Enbridge T-South Expansion (Sunrise)","gas",4,"Stage 4: Tender / Pre-construction","Various","Westcoast Energy (Enbridge)","$4B","Summer 2026","Late 2026","TBD","2500","N/A",false,"Provincial", "etse"],
+  [26,"Cedar LNG","gas",5,"Stage 5: Construction","North Coast","Haisla Nation & Pembina Pipeline Corporation","$4B","Jun 2024","2024","2028","500","100",true,"Kitimat", "clng"],
+  [27,"Enbridge T-North Expansion (Aspen Point)","gas",5,"Stage 5: Construction","Northeast","Westcoast Energy (Enbridge)","$1.2B","May 2025","2025","2026","300","N/A",false,"Fort St. John area", "etne"],
+  [28,"Enbridge T-South Expansion (Sunrise)","gas",4,"Stage 4: Tender / Pre-construction","Various","Westcoast Energy (Enbridge)","$4B","Summer 2026","2026","TBD","2500","N/A",false,"Provincial", "etse"],
   [29,"FortisBC Tilbury LNG Phase 2","gas",2,"Stage 2: Consultation / Assessments","Mainland/Southwest","FortisBC","N/A","TBD","TBD","TBD","1210","TBC",false,"Delta", "ftlp2"],
   [30,"Ksi Lisims LNG & Prince Rupert Gas Transmission","gas",4,"Stage 4: Tender / Pre-construction","North Coast","Nisga'a Nation, Rockies LNG, Western LNG","TBD","2026","2027","TBD","9375","253",true,"Pearce Island", "kllng"],
   [31,"LNG Canada Phase 2","gas",4,"Stage 4: Tender / Pre-construction","North Coast","Shell, PETRONAS, PetroChina, Mitsubishi, KOGAS","N/A","Late 2026","2027","TBD","3750","75",true,"Kitimat", "lngc"],
-  [32,"NEBC Connector Pipeline: NorthRiver Midstream","gas",4,"Stage 4: Tender / Pre-construction","Northeast","North River Midstream Inc.","$500M","Jun 2025","Jul 2025","2027","250","N/A",false,"Fort St. John area", "nc"],
+  [32,"NEBC Connector Pipeline: NorthRiver Midstream","gas",4,"Stage 4: Tender / Pre-construction","Northeast","North River Midstream Inc.","$500M","Jun 2025","2025","2027","250","N/A",false,"Fort St. John area", "nc"],
   [33,"Pembina NGL Pipeline – Birch-to-Taylor","gas",5,"Stage 5: Construction","Northeast","Pembina","$310M","Feb 2026","2026","TBD","230","N/A",false,"Taylor", "pnp1"],
   [34,"Pembina NGL Pipeline – Taylor-to-Gordondale","gas",4,"Stage 4: Tender / Pre-construction","Northeast","Pembina","$341M","Feb 2026","2026","TBD","330","N/A",false,"Taylor", "pnp2"],
   [35,"Woodfibre LNG","gas",5,"Stage 5: Construction","Mainland/Southwest","Pacific Energy Corporation, Enbridge","TBD","N/A","2016","2027","1500","100",false,"Squamish area", "wlng"],
 ];
 
 const STAGE_COLORS_CLASS = {1:"stage-1",2:"stage-2",3:"stage-3",4:"stage-4",5:"stage-5"};
-const STAGE_DESCRIPTIONS = {
-  1: "Planning",
-  2: "Consultation",
-  3: "Permitting",
-  4: "Tender/Pre-con",
-  5: "Construction"
-};
+const STAGE_DESCRIPTIONS = { 1: "Planning", 2: "Consultation", 3: "Permitting", 4: "Tender/Pre-con", 5: "Construction" };
 
 let activeFilters = { pill: 'all', charts: {} };
 let searchQuery = '';
 let sortCol = 'num';
 let sortDir = 1;
 let expandedRows = new Set();
+let currentTab = 'overview';
+
+// ---- TAB SWITCHING ----
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+    
+    btn.classList.add('active');
+    const tabId = btn.dataset.tab;
+    document.getElementById(tabId).classList.add('active');
+    currentTab = tabId;
+    if (tabId === 'timeline') renderTimeline();
+  });
+});
+
+// ---- TIMELINE RENDER ----
+function renderTimeline() {
+  const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035];
+  const header = document.getElementById('timeline-years-header');
+  header.innerHTML = '<div style="width:260px"></div>' + years.map(y => `<div class="timeline-year">${y}</div>`).join('');
+
+  const container = document.getElementById('timeline-rows');
+  container.innerHTML = '';
+
+  const validProjects = PROJECTS.filter(p => !isNaN(parseInt(p[9])));
+  validProjects.sort((a,b) => parseInt(a[9]) - parseInt(b[9]));
+
+  validProjects.forEach(p => {
+    const start = parseInt(p[9]);
+    const endRaw = parseInt(p[10]);
+    const end = isNaN(endRaw) ? 2035 : Math.min(endRaw, 2035);
+    
+    if (start > 2035) return;
+
+    const row = document.createElement('div');
+    row.className = 'timeline-row';
+    
+    const startIdx = Math.max(start - 2024, 0);
+    const duration = Math.max(end - start, 1);
+    const offsetPct = (startIdx / years.length) * 100;
+    const widthPct = (duration / years.length) * 100;
+
+    row.innerHTML = `
+      <div class="timeline-label" title="${p[1]}">${p[1]}</div>
+      <div class="timeline-bar-container">
+        <div class="timeline-bar ${p[2]}" style="left:${offsetPct}%; width:${widthPct}%"></div>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
 
 // ---- UTILITIES ----
 function sectorLabel(s) { return s === 'energy' ? 'Clean Energy' : s === 'mining' ? 'Mining' : 'Natural Gas'; }
