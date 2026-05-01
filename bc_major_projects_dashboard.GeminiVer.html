@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BC Major Projects Dashboard - Refined</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1a2744;
+    --navy-mid: #243256;
+    --navy-light: #2e3f6a;
+    --gold: #c49a3c;
+    --gold-light: #e8c46a;
+    --gold-dim: rgba(196,154,60,0.15);
+    --teal: #1d7a8a;
+    --teal-light: #e3f4f7;
+    --cream: #f8f5ef;
+    --white: #ffffff;
+    --text-dark: #1a2744;
+    --text-mid: #4a5568;
+    --text-light: #8a96aa;
+    --border: rgba(26,39,68,0.1);
+    --energy-color: #1d7a8a;
+    --mining-color: #b85c38;
+    --gas-color: #6b7a3e;
+    --s1: #e8c46a; --s2: #f0a04a; --s3: #5b9bd5; --s4: #4ca87a; --s5: #2d8a5a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--navy);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -80px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(196,154,60,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--teal), var(--gold));
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 40px 28px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .bc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(196,154,60,0.15);
+    border: 1px solid rgba(196,154,60,0.35);
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-bottom: 12px;
+  }
+  .bc-badge span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--gold-light);
+    text-transform: uppercase;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    color: var(--white);
+    line-height: 1.15;
+    font-weight: 400;
+  }
+  header h1 em {
+    color: var(--gold-light);
+    font-style: italic;
+  }
+  .header-meta {
+    text-align: right;
+  }
+  .header-meta p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    font-family: 'DM Mono', monospace;
+    line-height: 1.8;
+  }
+  .header-meta strong {
+    color: rgba(255,255,255,0.75);
+    font-weight: 500;
+  }
+
+  /* MAIN */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 36px 40px 60px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* KPI TILES */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .kpi-tile {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .kpi-tile:hover { 
+    box-shadow: 0 4px 20px rgba(26,39,68,0.08); 
+    transform: translateY(-2px);
+  }
+  .kpi-tile::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .kpi-tile.total::before { background: var(--navy); }
+  .kpi-tile.priority::before { background: var(--gold); }
+  .kpi-tile.jobs::before { background: var(--teal); }
+  .kpi-tile.active::before { background: var(--s5); }
+  
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--text-light);
+  }
+  .kpi-sub strong { color: var(--text-mid); font-weight: 500; }
+
+  /* CHARTS ROW */
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .chart-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: 420px;
+  }
+  .chart-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 18px;
+    letter-spacing: 0.02em;
+  }
+
+  .bar-chart { display: flex; flex-direction: column; gap: 10px; }
+  .bar-row { display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
+  .bar-row:hover .bar-label { color: var(--navy); }
+  .bar-meta { display: flex; justify-content: space-between; align-items: baseline; }
+  .bar-label {
+    font-size: 12px;
+    color: var(--text-mid);
+    transition: color 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+  .bar-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--navy);
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+  .bar-track {
+    height: 6px;
+    background: #eef0f4;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.22,1,0.36,1);
+  }
+  .bar-row.active-filter .bar-label { color: var(--navy); font-weight: 600; }
+  .bar-row.inactive-filter { opacity: 0.3; }
+
+  /* DONUT CHART SPECIFIC */
+  .donut-container {
+    position: relative;
+    width: 100%;
+    max-width: 220px;
+    margin: 0 auto 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .donut-svg { transform: rotate(-90deg); }
+  .donut-segment {
+    fill: transparent;
+    stroke-width: 12;
+    transition: stroke-dasharray 0.6s ease, stroke 0.3s, opacity 0.3s;
+    cursor: pointer;
+  }
+  .donut-segment:hover { stroke-width: 14; opacity: 0.9; }
+  .donut-segment.inactive { opacity: 0.15; }
+  .donut-center-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .donut-center-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--navy);
+    display: block;
+  }
+  .donut-center-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-light);
+    font-weight: 600;
+  }
+  .donut-legend { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+  .legend-item:hover { background: #f5f6f9; }
+  .legend-item.active { background: #f0f1f4; font-weight: 600; }
+  .legend-item.inactive { opacity: 0.4; }
+  .legend-label-wrap { display: flex; align-items: center; gap: 8px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* SECTOR COLORS */
+  .fill-energy { stroke: var(--energy-color); background: var(--energy-color); }
+  .fill-mining { stroke: var(--mining-color); background: var(--mining-color); }
+  .fill-gas { stroke: var(--gas-color); background: var(--gas-color); }
+  .fill-region { background: var(--navy-light); }
+  .fill-s1 { background: var(--s1); }
+  .fill-s2 { background: var(--s2); }
+  .fill-s3 { background: var(--s3); }
+  .fill-s4 { background: var(--s4); }
+  .fill-s5 { background: var(--s5); }
+
+  /* TOOLBAR & FILTERS */
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-label-txt {
+    font-size: 11px;
+    color: var(--text-light);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    margin-right: 4px;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .pill:hover { border-color: var(--navy); color: var(--navy); }
+  .pill.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+  .pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  
+  .action-btns { display: flex; gap: 8px; }
+  .btn-secondary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--navy);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { background: var(--navy); color: var(--white); border-color: var(--navy); }
+  .clear-btn {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px 10px;
+    border: none;
+    background: none;
+    letter-spacing: 0.04em;
+    display: none;
+  }
+  .clear-btn.visible { display: inline-block; }
+
+  /* PROJECT TABLE */
+  .table-wrapper {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .table-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .table-count { font-size: 13px; color: var(--text-mid); }
+  .table-count strong { color: var(--navy); font-weight: 600; }
+  .search-wrap { position: relative; }
+  .search-wrap input {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    padding: 7px 14px 7px 34px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-dark);
+    background: var(--cream);
+    width: 240px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-wrap input:focus { border-color: var(--navy); }
+  .search-icon {
+    position: absolute;
+    left: 11px; top: 50%;
+    transform: translateY(-50%);
+    width: 14px; height: 14px;
+    color: var(--text-light);
+  }
+
+  .table-container { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 900px; }
+  thead th {
+    background: #f5f6f9;
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    transition: background 0.15s;
+  }
+  thead th:hover { background: #eceff4; color: var(--navy); }
+  thead th .sort-indicator { display: inline-block; width: 12px; margin-left: 4px; opacity: 0.3; }
+  thead th.sorted .sort-indicator { opacity: 1; color: var(--navy); }
+
+  tbody tr { border-bottom: 1px solid #f0f1f4; transition: background 0.1s; cursor: pointer; }
+  tbody tr:hover { background: #f9fafc; }
+  tbody tr.expanded { background: #f5f7fb; border-bottom: none; }
+
+  td { padding: 12px 14px; vertical-align: middle; }
+  td.num { font-family: 'DM Mono', monospace; color: var(--text-light); font-size: 11px; width: 40px; }
+  td.name-cell { font-weight: 600; color: var(--navy); }
+  td.name-cell small { display: block; font-weight: 400; font-size: 11px; color: var(--text-light); margin-top: 2px; }
+
+  .sector-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .sector-badge.energy { background: rgba(29,122,138,0.12); color: #1d7a8a; }
+  .sector-badge.mining { background: rgba(184,92,56,0.12); color: #b85c38; }
+  .sector-badge.gas { background: rgba(107,122,62,0.12); color: #5a6830; }
+
+  .stage-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .stage-badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .stage-1 { background: rgba(232,196,106,0.18); color: #8a6e1a; } .stage-1 .dot { background: #e8c46a; }
+  .stage-2 { background: rgba(240,160,74,0.15); color: #8a4e1a; } .stage-2 .dot { background: #f0a04a; }
+  .stage-3 { background: rgba(91,155,213,0.15); color: #2a5c8a; } .stage-3 .dot { background: #5b9bd5; }
+  .stage-4 { background: rgba(76,168,122,0.15); color: #266044; } .stage-4 .dot { background: #4ca87a; }
+  .stage-5 { background: rgba(45,138,90,0.15); color: #1a5c38; } .stage-5 .dot { background: #2d8a5a; }
+
+  .priority-star {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px; height: 20px;
+    background: var(--gold-dim);
+    border-radius: 50%;
+    font-size: 11px;
+  }
+  td.mono { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--text-mid); }
+
+  /* EXPANDED ROW */
+  tr.detail-row td { padding: 0; border-bottom: 1px solid #e8eaf0; }
+  .detail-inner {
+    padding: 20px 54px 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    background: #f5f7fb;
+    border-left: 4px solid var(--navy);
+    animation: slideDown 0.25s ease-out;
+  }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  .detail-item label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .detail-item p { font-size: 13px; color: var(--text-mid); line-height: 1.4; }
+  .detail-item p strong { color: var(--navy); }
+  
+  .gov-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--teal);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.15s;
+  }
+  .gov-link:hover { color: var(--navy); text-decoration: underline; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
+
+  /* FOOTER */
+  footer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px 32px;
+    font-size: 11px;
+    color: var(--text-light);
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    justify-content: space-between;
+  }
+  footer a { color: var(--teal); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px) { .charts-row { grid-template-columns: 1fr 1fr; } .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 700px) {
+    main, footer { padding-left: 20px; padding-right: 20px; }
+    .header-inner { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
+    .charts-row { grid-template-columns: 1fr; }
+    .detail-inner { grid-template-columns: 1fr 1fr; }
+    .search-wrap input { width: 100%; }
+    .toolbar { flex-direction: column; align-items: flex-start; }
+    footer { flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="bc-badge"><span>British Columbia · Look West Strategy</span></div>
+      <h1>Major Projects <em>Dashboard</em></h1>
+    </div>
+    <div class="header-meta">
+      <p><strong>Source:</strong> BC Government Major Projects Registry</p>
+      <p><strong>Updated:</strong> April 29, 2026</p>
+      <p id="header-stats">35 projects · 3 sectors · 8 regions</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- KPI ROW -->
+  <div class="section-label">Performance Indicators</div>
+  <div class="kpi-row">
+    <div class="kpi-tile total">
+      <div class="kpi-label">Current View</div>
+      <div class="kpi-value" id="kpi-total">0</div>
+      <div class="kpi-sub">Total active projects</div>
+    </div>
+    <div class="kpi-tile priority">
+      <div class="kpi-label">Priority Projects</div>
+      <div class="kpi-value" id="kpi-priority">0</div>
+      <div class="kpi-sub"><strong id="kpi-priority-pct">0%</strong> of current view</div>
+    </div>
+    <div class="kpi-tile active">
+      <div class="kpi-label">Under Construction</div>
+      <div class="kpi-value" id="kpi-construction">0</div>
+      <div class="kpi-sub">Stage 5 implementation</div>
+    </div>
+    <div class="kpi-tile jobs">
+      <div class="kpi-label">Est. Job Capacity</div>
+      <div class="kpi-value" id="kpi-jobs">0</div>
+      <div class="kpi-sub">Total construction positions</div>
+    </div>
+  </div>
+
+  <!-- CHARTS ROW -->
+  <div class="section-label">Composition</div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">Sector Allocation</div>
+      <div id="chart-sector"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Maturity Stage</div>
+      <div class="bar-chart" id="chart-stage"></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Economic Regions</div>
+      <div class="bar-chart" id="chart-region"></div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="section-label">Inventory</div>
+  <div class="toolbar">
+    <div class="filter-bar" id="filter-bar">
+      <span class="filter-label-txt">Focus:</span>
+      <span class="pill active" data-filter="all">All Projects</span>
+      <span class="pill" data-filter="priority">⭐ Priority</span>
+      <span class="pill" data-filter="energy"><span class="pill-dot" style="background:#1d7a8a"></span>Energy</span>
+      <span class="pill" data-filter="mining"><span class="pill-dot" style="background:#b85c38"></span>Mining</span>
+      <span class="pill" data-filter="gas"><span class="pill-dot" style="background:#6b7a3e"></span>Gas</span>
+      <button class="clear-btn" id="clear-btn">✕ Reset Charts</button>
+    </div>
+    <div class="action-btns">
+        <button class="btn-secondary" onclick="exportCSV()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Export CSV
+        </button>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrapper">
+    <div class="table-header-bar">
+      <div class="table-count"><strong id="visible-count">0</strong> projects matching filters</div>
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="8.5" cy="8.5" r="5.5"/><line x1="13" i1="13" x2="18" i2="18"/>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search by name, proponent, or city...">
+      </div>
+    </div>
+
+    <div class="table-container">
+        <table id="projects-table">
+          <thead>
+            <tr>
+              <th data-col="num">ID <span class="sort-indicator">↕</span></th>
+              <th data-col="name">Project Name <span class="sort-indicator">↕</span></th>
+              <th data-col="sector">Sector <span class="sort-indicator">↕</span></th>
+              <th data-col="stage">Stage <span class="sort-indicator">↕</span></th>
+              <th data-col="region">Region <span class="sort-indicator">↕</span></th>
+              <th data-col="jobs">Jobs <span class="sort-indicator">↕</span></th>
+              <th data-col="fid">FID <span class="sort-indicator">↕</span></th>
+              <th data-col="constStart">Start <span class="sort-indicator">↕</span></th>
+              <th data-col="completion">End <span class="sort-indicator">↕</span></th>
+              <th data-col="priority" style="text-align:center">⭐ <span class="sort-indicator">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+    </div>
+
+    <div class="empty-state" id="empty-state" style="display:none">
+      <div style="font-size:32px; margin-bottom:12px">🔍</div>
+      <p style="font-weight:600; color:var(--navy)">No matches found</p>
+      <p style="font-size:13px">Try adjusting your filters or search term.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>© 2026 British Columbia Look West Strategy · Data: <a href="https://www2.gov.bc.ca/gov/content/employment-business/major-projects" target="_blank">BC Major Projects Registry</a></p>
+  <p>Interact with charts or table rows for details</p>
+</footer>
+
+<script>
+const PROJECTS = [
+  // num, name, sector, stageNum, stageLabel, region, proponent, capex, fid, constStart, completion, constJobs, opsJobs, priority, location, anchor
+  [1,"North Coast Transmission Line","energy",4,"Stage 4: Tender / Pre-construction","North Coast","BC Hydro","$6B","2026","2026","TBD","1500","N/A",true,"Prince George to Terrace", "nctl"],
+  [2,"Highland Valley Wind","energy",3,"Stage 3: Permitting","Thompson-Okanagan","Highland Valley Wind Inc. (Ashcroft Indian Band, Capstone)","N/A","N/A","2028","2031","275","TBC",true,"Logan Lake", "hvw"],
+  [3,"K2 Wind","energy",3,"Stage 3: Permitting","Thompson-Okanagan","K2 Wind Power Inc. (Westbank First Nation, Innergex)","N/A","N/A","2029","2031","130","5",true,"Kelowna area", "k2w"],
+  [4,"m.ah a temEEwuh Solar","energy",2,"Stage 2: Consultation / Assessments","Thompson-Okanagan","Logan Lake (Oregon Jack Creek, BluEarth Renewables)","N/A","N/A","2029","TBD","200","5",true,"Logan Lake", "mats"],
+  [5,"Mount Mabel Wind","energy",3,"Stage 3: Permitting","Thompson-Okanagan","Mount Mabel Wind Inc. (Lower Nicola Indian Band, Capstone)","N/A","N/A","2028","2031","275","N/A",true,"Logan Lake area", "mmw"],
+  [6,"Nilhts'i Ecoener Wind","energy",3,"Stage 3: Permitting","Cariboo","Nilhts'i Ecoener Energy Corp. (Lheidli T'enneh, Ecoener)","N/A","N/A","2029","2031","100","TBC",true,"Prince George", "new"],
+  [7,"Ni Ti Mountain Wind","energy",3,"Stage 3: Permitting","Nechako","General Partnership (Stellat'en First Nation, Innergex)","N/A","N/A","Summer 2027","2030","200","8",true,"Fraser Lake", "ntmw"],
+  [8,"sniwt i? k?ul?mntn Wind","energy",3,"Stage 3: Permitting","Thompson-Okanagan","Elkhart Wind LP (Upper Nicola Band, Elemental Energy)","N/A","N/A","Spring 2027","Fall 2028","100","10",true,"Merritt", "skw"],
+  [9,"Stewart Creek Wind","energy",3,"Stage 3: Permitting","Northeast","Stewart Creek Power Inc. (West Moberly First Nation, Innergex)","N/A","N/A","Summer 2028","2030","200","10",true,"Fort St. John", "scw"],
+  [10,"Taylor Wind","energy",3,"Stage 3: Permitting","Northeast","Taylor Wind Project Inc. (Saulteau First Nations, EDF Renewables)","N/A","N/A","2028","2031","150","TBC",true,"Taylor", "tw"],
+  [11,"Yeyus Energy Project","energy",3,"Stage 3: Permitting","Vancouver Island/Coast","Yeyus Energy (Wei Wai Kum First Nation, Capstone Infrastructure)","N/A","N/A","2028","2031","275","TBC",true,"Campbell River", "yep"],
+  [12,"Blackwater Mine – Phase 2","mining",3,"Stage 3: Permitting","Cariboo","Artemis Gold Inc.","$1.44B","Dec 2025","Jan 2026","Late 2028","1500","1200",false,"Vanderhoof", "bm"],
+  [13,"Baptiste Nickel Project","mining",2,"Stage 2: Consultation / Assessments","Nechako","FPX Nickel Corporation","$3.9B","TBD","~2032","TBD","1300","700",false,"Fort St. James area", "bnp"],
+  [14,"Copper Mountain Mine – New Ingerbelle Ext.","mining",5,"Stage 5: Construction","Thompson-Okanagan","Hudbay Minerals","$290M","Feb 2026","2026","2040+","0","830",false,"Princeton Area", "cmm"],
+  [15,"Eskay Creek Mine","mining",5,"Stage 5: Construction","North Coast","Skeena Gold+Silver","N/A","Jan 2026","2026","TBD","949","771",true,"Stewart area", "ecm"],
+  [16,"Fording River Operations – Extension","mining",2,"Stage 2: Consultation / Assessments","Kootenay","Elk Valley Resources (EVR)","$3B","TBD","2029","TBD","0","1500",false,"Elk Valley", "fro"],
+  [17,"Greenhills Operations – Cougar 8/9","mining",1,"Stage 1: Planning","Kootenay","Elk Valley Resources (EVR)","N/A","TBD","2029","~2045","140","950",false,"Greenhills", "go"],
+  [18,"Highland Valley Copper Mine – Extension","mining",5,"Stage 5: Construction","Thompson-Okanagan","Teck Resources","$2.1–2.4B","Jun 2025","Aug 2025","~mid-2040s","2900","200",true,"Logan Lake", "hvcm"],
+  [19,"KSM Mine","mining",3,"Stage 3: Permitting","North Coast","Seabridge Gold","N/A","TBD","TBD","TBD","1550","1040",false,"Stewart area", "ksm"],
+  [20,"Mount Milligan Mine – 2035 Expansion","mining",5,"Stage 5: Construction","Cariboo","Centerra Gold Inc.","$400M","Jan 2026","2026","2035","0","574",true,"Fort St. James area", "mmm"],
+  [21,"New Polaris Project","mining",2,"Stage 2: Consultation / Assessments","Nechako","Canagold Resources","$290M","TBD","TBD","TBD","125","215",false,"Atlin", "npp"],
+  [22,"Red Chris Mine – Block Cave Expansion","mining",2,"Stage 2: Consultation / Assessments","North Coast","Newmont Corporation & Imperial Metals","$3B+","TBD","TBD","2038","1800","1500",true,"Dease Lake", "rcm"],
+  [23,"Red Mountain Mine","mining",3,"Stage 3: Permitting","North Coast","Cambria Gold Mines","$105M","TBD","TBD","TBD","250","200",false,"Stewart", "rmm"],
+  [24,"Trail Operations","mining",3,"Stage 3: Permitting","Kootenay","Teck Resources","$750M","TBD","TBD","TBD","450","106",false,"Near Trail", "to"],
+  [25,"Yellowhead Copper Project","mining",2,"Stage 2: Consultation / Assessments","Thompson-Okanagan","Taseko Mines","$1.58B","TBD","TBD","TBD","2000","590",false,"Vavenby area", "ycp"],
+  [26,"Cedar LNG","gas",5,"Stage 5: Construction","North Coast","Haisla Nation & Pembina Pipeline Corporation","$4B","Jun 2024","2024","Late 2028","500","100",true,"Kitimat", "clng"],
+  [27,"Enbridge T-North Expansion (Aspen Point)","gas",5,"Stage 5: Construction","Northeast","Westcoast Energy (Enbridge)","$1.2B","May 2025","Apr 2025","Late 2026","300","N/A",false,"Fort St. John area", "etne"],
+  [28,"Enbridge T-South Expansion (Sunrise)","gas",4,"Stage 4: Tender / Pre-construction","Various","Westcoast Energy (Enbridge)","$4B","Summer 2026","Late 2026","TBD","2500","N/A",false,"Provincial", "etse"],
+  [29,"FortisBC Tilbury LNG Phase 2","gas",2,"Stage 2: Consultation / Assessments","Mainland/Southwest","FortisBC","N/A","TBD","TBD","TBD","1210","TBC",false,"Delta", "ftlp2"],
+  [30,"Ksi Lisims LNG & Prince Rupert Gas Transmission","gas",4,"Stage 4: Tender / Pre-construction","North Coast","Nisga'a Nation, Rockies LNG, Western LNG","TBD","2026","2027","TBD","9375","253",true,"Pearce Island", "kllng"],
+  [31,"LNG Canada Phase 2","gas",4,"Stage 4: Tender / Pre-construction","North Coast","Shell, PETRONAS, PetroChina, Mitsubishi, KOGAS","N/A","Late 2026","2027","TBD","3750","75",true,"Kitimat", "lngc"],
+  [32,"NEBC Connector Pipeline: NorthRiver Midstream","gas",4,"Stage 4: Tender / Pre-construction","Northeast","North River Midstream Inc.","$500M","Jun 2025","Jul 2025","2027","250","N/A",false,"Fort St. John area", "nc"],
+  [33,"Pembina NGL Pipeline – Birch-to-Taylor","gas",5,"Stage 5: Construction","Northeast","Pembina","$310M","Feb 2026","2026","TBD","230","N/A",false,"Taylor", "pnp1"],
+  [34,"Pembina NGL Pipeline – Taylor-to-Gordondale","gas",4,"Stage 4: Tender / Pre-construction","Northeast","Pembina","$341M","Feb 2026","2026","TBD","330","N/A",false,"Taylor", "pnp2"],
+  [35,"Woodfibre LNG","gas",5,"Stage 5: Construction","Mainland/Southwest","Pacific Energy Corporation, Enbridge","TBD","N/A","2016","2027","1500","100",false,"Squamish area", "wlng"],
+];
+
+const STAGE_COLORS_CLASS = {1:"stage-1",2:"stage-2",3:"stage-3",4:"stage-4",5:"stage-5"};
+const STAGE_DESCRIPTIONS = {
+  1: "Planning",
+  2: "Consultation",
+  3: "Permitting",
+  4: "Tender/Pre-con",
+  5: "Construction"
+};
+
+let activeFilters = { pill: 'all', charts: {} };
+let searchQuery = '';
+let sortCol = 'num';
+let sortDir = 1;
+let expandedRows = new Set();
+
+// ---- UTILITIES ----
+function sectorLabel(s) { return s === 'energy' ? 'Clean Energy' : s === 'mining' ? 'Mining' : 'Natural Gas'; }
+function sectorFill(s) { return s === 'energy' ? 'fill-energy' : s === 'mining' ? 'fill-mining' : 'fill-gas'; }
+function formatNumber(num) { return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num; }
+
+// ---- CHART RENDERING ----
+function renderCharts() {
+  const data = getFilteredProjects();
+  const total = data.length || 0;
+
+  // --- Sector Donut Chart ---
+  const sectorCounts = { energy: 0, mining: 0, gas: 0 };
+  data.forEach(p => sectorCounts[p[2]]++);
+  const sContainer = document.getElementById('chart-sector');
+  sContainer.innerHTML = '';
+  const radius = 35;
+  const circumference = 2 * Math.PI * radius;
+  let currentOffset = 0;
+  const donutWrap = document.createElement('div');
+  donutWrap.className = 'donut-container';
+  let svgHTML = `<svg class="donut-svg" viewBox="0 0 100 100" width="100%" height="160">`;
+  ['energy', 'mining', 'gas'].forEach(key => {
+    const count = sectorCounts[key];
+    const arcLength = total > 0 ? (count / total) * circumference : 0;
+    const active = activeFilters.charts.sector === key;
+    const inactive = activeFilters.charts.sector && !active;
+    svgHTML += `<circle class="donut-segment ${sectorFill(key)} ${inactive ? 'inactive' : ''}" cx="50" cy="50" r="${radius}" stroke-dasharray="${arcLength} ${circumference}" stroke-dashoffset="-${currentOffset}" onclick="toggleChartFilter('sector', '${key}')"></circle>`;
+    currentOffset += arcLength;
+  });
+  svgHTML += `</svg>`;
+  donutWrap.innerHTML = svgHTML + `<div class="donut-center-text"><span class="donut-center-value">${total}</span><span class="donut-center-label">Projects</span></div>`;
+  const legend = document.createElement('div');
+  legend.className = 'donut-legend';
+  ['energy', 'mining', 'gas'].forEach(key => {
+    const count = sectorCounts[key];
+    const active = activeFilters.charts.sector === key;
+    const inactive = activeFilters.charts.sector && !active;
+    const item = document.createElement('div');
+    item.className = `legend-item ${active ? 'active' : ''} ${inactive ? 'inactive' : ''}`;
+    item.onclick = () => toggleChartFilter('sector', key);
+    item.innerHTML = `<div class="legend-label-wrap"><div class="legend-dot ${sectorFill(key)}"></div><span>${sectorLabel(key)}</span></div><span class="bar-count">${count}</span>`;
+    legend.appendChild(item);
+  });
+  sContainer.appendChild(donutWrap); sContainer.appendChild(legend);
+
+  // --- Stage Chart (Bar) ---
+  const stageCounts = {1:0, 2:0, 3:0, 4:0, 5:0};
+  data.forEach(p => stageCounts[p[3]]++);
+  const stChart = document.getElementById('chart-stage');
+  stChart.innerHTML = '';
+  [1,2,3,4,5].forEach(key => {
+    const count = stageCounts[key];
+    const active = activeFilters.charts.stage === key;
+    const inactive = activeFilters.charts.stage && !active;
+    const row = document.createElement('div');
+    row.className = `bar-row${active?' active-filter':''}${inactive?' inactive-filter':''}`;
+    row.innerHTML = `<div class="bar-meta"><span class="bar-label">Stage ${key}: ${STAGE_DESCRIPTIONS[key]}</span><span class="bar-count">${count}</span></div><div class="bar-track"><div class="bar-fill fill-s${key}" style="width:${total ? (count/total)*100 : 0}%"></div></div>`;
+    row.onclick = () => toggleChartFilter('stage', key);
+    stChart.appendChild(row);
+  });
+
+  // --- Region Chart (Bar) ---
+  const rChart = document.getElementById('chart-region');
+  rChart.innerHTML = '';
+  const regionCounts = {};
+  data.forEach(p => regionCounts[p[5]] = (regionCounts[p[5]]||0) + 1);
+  const sortedRegions = Object.entries(regionCounts).sort((a,b) => b[1] - a[1]);
+  
+  sortedRegions.forEach(([key, count]) => {
+    const active = activeFilters.charts.region === key;
+    const inactive = activeFilters.charts.region && !active;
+    const row = document.createElement('div');
+    row.className = `bar-row${active?' active-filter':''}${inactive?' inactive-filter':''}`;
+    row.innerHTML = `
+      <div class="bar-meta">
+        <span class="bar-label">${key}</span>
+        <span class="bar-count">${count}</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill fill-region" style="width:${total ? (count/total)*100 : 0}%"></div></div>`;
+    row.onclick = () => toggleChartFilter('region', key);
+    rChart.appendChild(row);
+  });
+}
+
+// ---- KPI UPDATES ----
+function updateKPIs() {
+    const data = getFilteredProjects();
+    const totalCount = data.length;
+    const priorityCount = data.filter(p => p[13]).length;
+    const constructionCount = data.filter(p => p[3] === 5).length;
+    const totalJobs = data.reduce((sum, p) => sum + (parseInt(p[11]) || 0), 0);
+
+    document.getElementById('kpi-total').textContent = totalCount;
+    document.getElementById('kpi-priority').textContent = priorityCount;
+    document.getElementById('kpi-priority-pct').textContent = totalCount ? Math.round((priorityCount/totalCount)*100) + '%' : '0%';
+    document.getElementById('kpi-construction').textContent = constructionCount;
+    document.getElementById('kpi-jobs').textContent = formatNumber(totalJobs);
+}
+
+function getFilteredProjects() {
+  return PROJECTS.filter(p => {
+    if (activeFilters.pill === 'priority' && !p[13]) return false;
+    if (activeFilters.pill === 'energy' && p[2] !== 'energy') return false;
+    if (activeFilters.pill === 'mining' && p[2] !== 'mining') return false;
+    if (activeFilters.pill === 'gas' && p[2] !== 'gas') return false;
+    if (activeFilters.charts.sector && p[2] !== activeFilters.charts.sector) return false;
+    if (activeFilters.charts.stage && p[3] !== activeFilters.charts.stage) return false;
+    if (activeFilters.charts.region && p[5] !== activeFilters.charts.region) return false;
+    if (searchQuery) {
+      const haystack = [p[1], p[5], p[6], p[14], sectorLabel(p[2])].join(' ').toLowerCase();
+      if (!haystack.includes(searchQuery)) return false;
+    }
+    return true;
+  });
+}
+
+function toggleChartFilter(type, key) {
+  if (activeFilters.charts[type] === key) delete activeFilters.charts[type];
+  else activeFilters.charts[type] = key;
+  document.getElementById('clear-btn').classList.toggle('visible', Object.keys(activeFilters.charts).length > 0);
+  renderCharts(); renderTable(); updateKPIs();
+}
+
+function renderTable() {
+  const filtered = sortProjects(getFilteredProjects());
+  const tbody = document.getElementById('table-body');
+  const empty = document.getElementById('empty-state');
+  document.getElementById('visible-count').textContent = filtered.length;
+  tbody.innerHTML = '';
+  if (filtered.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  filtered.forEach(p => {
+    const [num, name, sector, stageNum, stageLabel, region, proponent, capex, fid, constStart, completion, constJobs, opsJobs, priority, location, anchor] = p;
+    const isExpanded = expandedRows.has(num);
+    const tr = document.createElement('tr');
+    if (isExpanded) tr.classList.add('expanded');
+    tr.innerHTML = `<td class="num">${num}</td><td class="name-cell">${name}<small>${location}</small></td><td><span class="sector-badge ${sector}">${sectorLabel(sector)}</span></td><td><span class="stage-badge ${STAGE_COLORS_CLASS[stageNum]}"><span class="dot"></span>${stageLabel.split(':')[0]}</span></td><td style="color:var(--text-mid)">${region}</td><td class="mono">${constJobs}</td><td class="mono">${fid}</td><td class="mono">${constStart}</td><td class="mono">${completion}</td><td style="text-align:center">${priority ? '<span class="priority-star">⭐</span>' : '—'}</td>`;
+    tr.onclick = () => toggleExpand(num); tbody.appendChild(tr);
+    if (isExpanded) {
+      const detailTr = document.createElement('tr'); detailTr.className = 'detail-row';
+      detailTr.innerHTML = `<td colspan="10"><div class="detail-inner"><div class="detail-item"><label>Proponent</label><p><strong>${proponent}</strong></p></div><div class="detail-item"><label>Economic Impact</label><p>Const. Jobs: <strong>${constJobs}</strong><br>Ops Jobs: <strong>${opsJobs}</strong></p></div><div class="detail-item"><label>Capital Cost</label><p>${capex}</p></div><div class="detail-item"><label>Project Registry</label><p><a href="https://www2.gov.bc.ca/gov/content/employment-business/major-projects#${anchor}" target="_blank" class="gov-link">View Official Page ↗</a><br><small style="color:var(--text-light)">${priority ? '⭐ Priority project track' : 'Standard Path'}</small></p></div></div></td>`;
+      tbody.appendChild(detailTr);
+    }
+  });
+}
+
+function sortProjects(data) {
+  return [...data].sort((a, b) => {
+    let va, vb;
+    switch(sortCol) {
+      case 'num': va = a[0]; vb = b[0]; break;
+      case 'name': va = a[1]; vb = b[1]; break;
+      case 'sector': va = a[2]; vb = b[2]; break;
+      case 'stage': va = a[3]; vb = b[3]; break;
+      case 'region': va = a[5]; vb = b[5]; break;
+      case 'jobs': va = parseInt(a[11]) || 0; vb = parseInt(b[11]) || 0; break;
+      case 'fid': va = a[8]; vb = b[8]; break;
+      case 'constStart': va = a[9]; vb = b[9]; break;
+      case 'completion': va = a[10]; vb = b[10]; break;
+      case 'priority': va = a[13] ? 1 : 0; vb = b[13] ? 1 : 0; break;
+      default: va = a[0]; vb = b[0];
+    }
+    if (typeof va === 'string') return va.localeCompare(vb) * sortDir;
+    return (va - vb) * sortDir;
+  });
+}
+
+function toggleExpand(num) { if (expandedRows.has(num)) expandedRows.delete(num); else expandedRows.add(num); renderTable(); }
+
+function exportCSV() {
+    const data = getFilteredProjects();
+    const headers = ["ID", "Name", "Sector", "Stage", "Region", "Proponent", "Const Jobs", "Ops Jobs", "Start", "End", "Priority"];
+    const rows = data.map(p => [p[0], p[1], p[2], p[4], p[5], p[6], p[11], p[12], p[9], p[10], p[13]]);
+    let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+    const link = document.createElement("a"); link.setAttribute("href", encodeURI(csvContent)); link.setAttribute("download", "bc_projects.csv");
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+}
+
+// ---- EVENT LISTENERS ----
+document.querySelectorAll('.pill').forEach(pill => { pill.addEventListener('click', () => { document.querySelectorAll('.pill').forEach(p => p.classList.remove('active')); pill.classList.add('active'); activeFilters.pill = pill.dataset.filter; renderTable(); updateKPIs(); renderCharts(); }); });
+document.getElementById('search-input').addEventListener('input', e => { searchQuery = e.target.value.toLowerCase(); renderTable(); updateKPIs(); renderCharts(); });
+document.getElementById('clear-btn').onclick = () => { activeFilters.charts = {}; document.getElementById('clear-btn').classList.remove('visible'); renderCharts(); renderTable(); updateKPIs(); };
+document.querySelectorAll('thead th').forEach(th => { th.onclick = () => { const col = th.dataset.col; if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; } document.querySelectorAll('thead th').forEach(t => t.classList.remove('sorted')); th.classList.add('sorted'); th.querySelector('.sort-indicator').textContent = sortDir === 1 ? '↑' : '↓'; renderTable(); }; });
+
+window.onload = () => { updateKPIs(); renderCharts(); renderTable(); };
+</script>
+</body>
+</html>
