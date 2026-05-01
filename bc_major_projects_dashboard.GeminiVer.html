@@ -369,9 +369,9 @@
   .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
 
   /* CHART & TIMELINE COLORS (FORCE APPLY) */
-  .fill-energy, .energy { stroke: var(--energy-color) !important; background: var(--energy-color) !important; }
-  .fill-mining, .mining { stroke: var(--mining-color) !important; background: var(--mining-color) !important; }
-  .fill-gas, .gas { stroke: var(--gas-color) !important; background: var(--gas-color) !important; }
+  .fill-energy, .timeline-bar.energy { stroke: var(--energy-color) !important; background: var(--energy-color) !important; }
+  .fill-mining, .timeline-bar.mining { stroke: var(--mining-color) !important; background: var(--mining-color) !important; }
+  .fill-gas, .timeline-bar.gas { stroke: var(--gas-color) !important; background: var(--gas-color) !important; }
   .fill-region { background: var(--navy-light) !important; }
   .fill-s1 { background: var(--s1) !important; }
   .fill-s2 { background: var(--s2) !important; }
@@ -420,6 +420,56 @@
   .pill.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
   .pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   
+  /* TIMELINE SPECIFIC */
+  .timeline-toolbar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    align-items: end;
+    margin-bottom: 24px;
+    background: var(--white);
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .timeline-select {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    outline: none;
+  }
+  .timeline-select:focus { border-color: var(--navy); }
+  
+  .timeline-count-card {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 8px;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 56px;
+    box-shadow: 0 4px 10px rgba(26,39,68,0.15);
+  }
+  .timeline-count-card .count-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    font-weight: 700;
+  }
+  .timeline-count-card .count-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    line-height: 1.1;
+  }
+
   .action-btns { display: flex; gap: 8px; }
   .btn-secondary {
     font-family: 'DM Sans', sans-serif;
@@ -609,7 +659,7 @@
   }
   .timeline-header {
     display: grid;
-    grid-template-columns: 260px repeat(12, 1fr);
+    grid-template-columns: 280px repeat(12, 1fr);
     border-bottom: 2px solid var(--border);
     padding-bottom: 14px;
     margin-bottom: 12px;
@@ -623,10 +673,16 @@
   }
   .timeline-row {
     display: grid;
-    grid-template-columns: 260px repeat(12, 1fr);
+    grid-template-columns: 280px repeat(12, 1fr);
     align-items: center;
-    height: 40px;
+    height: 48px;
     border-bottom: 1px solid #f0f1f4;
+  }
+  .timeline-label-cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-right: 20px;
   }
   .timeline-label {
     font-size: 13px;
@@ -635,21 +691,33 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-right: 20px;
   }
   .timeline-bar-container {
     grid-column: 2 / span 12;
-    height: 14px;
+    height: 22px;
     background: #f0f2f6;
-    border-radius: 7px;
+    border-radius: 11px;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
   .timeline-bar {
     position: absolute;
     height: 100%;
-    border-radius: 7px;
+    border-radius: 11px;
     transition: width 1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    padding: 0 10px;
+  }
+  .timeline-verbatim {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.02em;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
   }
 
   /* INSIGHTS VIEW STYLES */
@@ -723,6 +791,7 @@
     .tab-nav { padding: 0 20px; gap: 15px; overflow-x: auto; }
     .header-title-row { gap: 12px; }
     .llm-disclaimer { border-left: none; padding-left: 0; margin-top: 10px; }
+    .timeline-toolbar { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -852,13 +921,66 @@
       <div class="empty-state" id="empty-state" style="display:none">
         <div style="font-size:32px; margin-bottom:12px">🔍</div>
         <p style="font-weight:600; color:var(--navy)">No matches found</p>
-        <p style="font-size:15px">Try adjusting your filters or search term.</p>
+        <p style="font-size:13px">Try adjusting your filters or search term.</p>
       </div>
     </div>
   </div>
 
   <!-- TIMELINE TAB -->
   <div id="timeline" class="view-container">
+    <div class="section-label">Strategic Controls</div>
+    <div class="timeline-toolbar">
+        <div class="filter-bar">
+          <span class="filter-label-txt">Sector:</span>
+          <select id="t-sector-select" class="timeline-select">
+            <option value="all">All Sectors</option>
+            <option value="energy">Clean Energy</option>
+            <option value="mining">Mining</option>
+            <option value="gas">Natural Gas</option>
+          </select>
+        </div>
+
+        <div class="filter-bar">
+            <span class="filter-label-txt">Stage:</span>
+            <select id="stage-select" class="timeline-select">
+                <option value="all">All Stages</option>
+                <option value="1">Stage 1: Planning</option>
+                <option value="2">Stage 2: Consultation</option>
+                <option value="3">Stage 3: Permitting</option>
+                <option value="4">Stage 4: Tender/Pre-con</option>
+                <option value="5">Stage 5: Construction</option>
+            </select>
+        </div>
+
+        <div class="filter-bar">
+            <span class="filter-label-txt">Region:</span>
+            <select id="region-select" class="timeline-select">
+                <option value="all">All Regions</option>
+            </select>
+        </div>
+
+        <div class="filter-bar">
+            <span class="filter-label-txt">Proponent:</span>
+            <select id="proponent-select" class="timeline-select">
+                <option value="all">All Proponents</option>
+            </select>
+        </div>
+
+        <div class="filter-bar">
+            <span class="filter-label-txt">Priority:</span>
+            <select id="priority-select" class="timeline-select">
+                <option value="all">All Projects</option>
+                <option value="priority">Priority Only</option>
+                <option value="non-priority">Non-Priority Only</option>
+            </select>
+        </div>
+
+        <div class="timeline-count-card">
+          <span class="count-label">Projects Filtered</span>
+          <span class="count-value" id="timeline-project-count">0</span>
+        </div>
+    </div>
+
     <div class="section-label">Construction Outlook</div>
     <div class="timeline-grid">
       <div class="timeline-header" id="timeline-years-header">
@@ -976,6 +1098,7 @@ const STAGE_COLORS_CLASS = {1:"stage-1",2:"stage-2",3:"stage-3",4:"stage-4",5:"s
 const STAGE_DESCRIPTIONS = { 1: "Planning", 2: "Consultation", 3: "Permitting", 4: "Tender/Pre-con", 5: "Construction" };
 
 let activeFilters = { pill: 'all', charts: {} };
+let timelineFilters = { sector: 'all', stage: 'all', region: 'all', priority: 'all', proponent: 'all' };
 let searchQuery = '';
 let sortCol = 'num';
 let sortDir = 1;
@@ -1000,15 +1123,27 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 function renderTimeline() {
   const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035];
   const header = document.getElementById('timeline-years-header');
-  header.innerHTML = '<div style="width:260px"></div>' + years.map(y => `<div class="timeline-year">${y}</div>`).join('');
+  header.innerHTML = '<div style="width:280px"></div>' + years.map(y => `<div class="timeline-year">${y}</div>`).join('');
 
   const container = document.getElementById('timeline-rows');
   container.innerHTML = '';
 
-  const validProjects = PROJECTS.filter(p => !isNaN(parseInt(p[9])));
-  validProjects.sort((a,b) => parseInt(a[9]) - parseInt(b[9]));
+  let filtered = PROJECTS.filter(p => !isNaN(parseInt(p[9])));
+  
+  // Apply Timeline single-select filters
+  if (timelineFilters.sector !== 'all') filtered = filtered.filter(p => p[2] === timelineFilters.sector);
+  if (timelineFilters.stage !== 'all') filtered = filtered.filter(p => p[3].toString() === timelineFilters.stage);
+  if (timelineFilters.region !== 'all') filtered = filtered.filter(p => p[5] === timelineFilters.region);
+  if (timelineFilters.proponent !== 'all') filtered = filtered.filter(p => p[6] === timelineFilters.proponent);
+  if (timelineFilters.priority === 'priority') filtered = filtered.filter(p => p[13]);
+  if (timelineFilters.priority === 'non-priority') filtered = filtered.filter(p => !p[13]);
 
-  validProjects.forEach(p => {
+  // Update Timeline count card
+  document.getElementById('timeline-project-count').textContent = filtered.length;
+
+  filtered.sort((a,b) => parseInt(a[9]) - parseInt(b[9]));
+
+  filtered.forEach(p => {
     const start = parseInt(p[9]);
     const endRaw = parseInt(p[10]);
     const end = isNaN(endRaw) ? 2035 : Math.min(endRaw, 2035);
@@ -1024,13 +1159,39 @@ function renderTimeline() {
     const widthPct = (duration / years.length) * 100;
 
     row.innerHTML = `
-      <div class="timeline-label" title="${p[1]}">${p[1]}</div>
+      <div class="timeline-label-cell">
+        <div class="timeline-label" title="${p[1]}">${p[1]}</div>
+        <a href="https://www2.gov.bc.ca/gov/content/employment-business/major-projects#${p[15]}" target="_blank" class="gov-link" style="font-size: 10px;">View ↗</a>
+      </div>
       <div class="timeline-bar-container">
-        <div class="timeline-bar ${p[2]}" style="left:${offsetPct}%; width:${widthPct}%"></div>
+        <div class="timeline-bar ${p[2]}" style="left:${offsetPct}%; width:${widthPct}%">
+           <span class="timeline-verbatim">${p[9]} – ${p[10]}</span>
+        </div>
       </div>
     `;
     container.appendChild(row);
   });
+}
+
+// ---- POPULATE DROPDOWNS ----
+function populateTimelineDropdowns() {
+    const regions = [...new Set(PROJECTS.map(p => p[5]))].sort();
+    const proponents = [...new Set(PROJECTS.map(p => p[6]))].sort();
+    
+    const regSelect = document.getElementById('region-select');
+    const propSelect = document.getElementById('proponent-select');
+    
+    regions.forEach(reg => {
+        const opt = document.createElement('option');
+        opt.value = reg; opt.textContent = reg;
+        regSelect.appendChild(opt);
+    });
+    
+    proponents.forEach(prop => {
+        const opt = document.createElement('option');
+        opt.value = prop; opt.textContent = prop;
+        propSelect.appendChild(opt);
+    });
 }
 
 // ---- UTILITIES ----
@@ -1212,12 +1373,55 @@ function exportCSV() {
 }
 
 // ---- EVENT LISTENERS ----
-document.querySelectorAll('.pill').forEach(pill => { pill.addEventListener('click', () => { document.querySelectorAll('.pill').forEach(p => p.classList.remove('active')); pill.classList.add('active'); activeFilters.pill = pill.dataset.filter; renderTable(); updateKPIs(); renderCharts(); }); });
+document.querySelectorAll('.pill').forEach(pill => { 
+    pill.addEventListener('click', () => { 
+        if (pill.dataset.filter) {
+            document.querySelectorAll('#filter-bar .pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            activeFilters.pill = pill.dataset.filter;
+            renderTable(); updateKPIs(); renderCharts(); 
+        } else if (pill.dataset.tfilter) {
+            const val = pill.dataset.tfilter;
+            document.querySelectorAll('#timeline-filter-bar .pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            timelineFilters.sector = val;
+            renderTimeline();
+        }
+    }); 
+});
+
+// Timeline specific event listeners for single-selects
+document.getElementById('t-sector-select').addEventListener('change', (e) => {
+    timelineFilters.sector = e.target.value;
+    renderTimeline();
+});
+document.getElementById('stage-select').addEventListener('change', (e) => {
+    timelineFilters.stage = e.target.value;
+    renderTimeline();
+});
+document.getElementById('region-select').addEventListener('change', (e) => {
+    timelineFilters.region = e.target.value;
+    renderTimeline();
+});
+document.getElementById('proponent-select').addEventListener('change', (e) => {
+    timelineFilters.proponent = e.target.value;
+    renderTimeline();
+});
+document.getElementById('priority-select').addEventListener('change', (e) => {
+    timelineFilters.priority = e.target.value;
+    renderTimeline();
+});
+
 document.getElementById('search-input').addEventListener('input', e => { searchQuery = e.target.value.toLowerCase(); renderTable(); updateKPIs(); renderCharts(); });
 document.getElementById('clear-btn').onclick = () => { activeFilters.charts = {}; document.getElementById('clear-btn').classList.remove('visible'); renderCharts(); renderTable(); updateKPIs(); };
 document.querySelectorAll('thead th').forEach(th => { th.onclick = () => { const col = th.dataset.col; if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; } document.querySelectorAll('thead th').forEach(t => t.classList.remove('sorted')); th.classList.add('sorted'); th.querySelector('.sort-indicator').textContent = sortDir === 1 ? '↑' : '↓'; renderTable(); }; });
 
-window.onload = () => { updateKPIs(); renderCharts(); renderTable(); };
+window.onload = () => { 
+    populateTimelineDropdowns();
+    updateKPIs(); 
+    renderCharts(); 
+    renderTable(); 
+};
 </script>
 </body>
 </html>
